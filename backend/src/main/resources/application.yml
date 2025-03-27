@@ -6,6 +6,16 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: user
     password: password
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: none  # Prevents Hibernate from creating tables
+    properties:
+      hibernate:
+        format_sql: true  # Formats SQL logs for readability
+        show_sql: true    # Logs SQL queries in console (optional)
 
   ai:
     openai:
@@ -13,13 +23,18 @@ spring:
       chat:
         options:
           model: gpt-4o
+      embedding:
+        options:
+          model: text-embedding-3-small
 
     vectorstore:
       pgvector:
+        initialize-schema: false
         index-type: HNSW
         distance-type: COSINE_DISTANCE
         dimensions: 1536
         batching-strategy: TOKEN_COUNT # Optional: Controls how documents are batched for embedding
         max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+
 
 

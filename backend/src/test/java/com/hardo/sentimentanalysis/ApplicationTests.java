@@ -1,4 +1,4 @@
-package com.hardo.backend;
+package com.hardo.sentimentanalysis;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
