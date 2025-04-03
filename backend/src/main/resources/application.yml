@@ -1,6 +1,26 @@
 spring:
   application:
     name: sentiment-analysis
+  ai:
+    vertex:
+      ai:
+        gemini:
+          project-id: statement-analysis-455612
+          location: europe-north1
+          chat:
+            options:
+              model: gemini-2.0-flash-001
+        embedding:
+          project-id: statement-analysis-455612
+          location: europe-north1
+          text:
+            options:
+              model: text-embedding-004
+              dimensions: 768
+              auto-truncate: false
+
+
+
 
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
@@ -17,24 +37,9 @@ spring:
         format_sql: true  # Formats SQL logs for readability
         show_sql: true    # Logs SQL queries in console (optional)
 
-  ai:
-    openai:
-      api-key: ${OPENAI_API_KEY}
-      chat:
-        options:
-          model: gpt-4o
-      embedding:
-        options:
-          model: text-embedding-3-small
 
-    vectorstore:
-      pgvector:
-        initialize-schema: false
-        index-type: HNSW
-        distance-type: COSINE_DISTANCE
-        dimensions: 1536
-        batching-strategy: TOKEN_COUNT # Optional: Controls how documents are batched for embedding
-        max-document-batch-size: 10000 # Optional: Maximum number of documents per batch
+
+
 
 
 
