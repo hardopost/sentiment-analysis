@@ -14,17 +14,8 @@ import java.io.IOException;
 @Service
 public class PDFExtractorService {
 
-    //private static final String PDF_DIRECTORY = "src/main/pdfs/";  // Where PDFs are stored
-    @Value("classpath:/pdfs/AKO_2023-2024.pdf")
-    private Resource pdfFile;
-
-    public String extractTextFromPDF() throws IOException {
-
-
-        //File file = new File(PDF_DIRECTORY + fileName);
-        //if (!file.exists()) throw new IOException("PDF file not found: " + file.getAbsolutePath());
-
-        try (PDDocument document = Loader.loadPDF(pdfFile.getFile())) {
+    public String extractTextFromPDF(File pdfFile) throws IOException {
+        try (PDDocument document = Loader.loadPDF(pdfFile)) {
             PDFTextStripper pdfStripper = new PDFTextStripper();
             return pdfStripper.getText(document);
         }

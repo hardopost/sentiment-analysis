@@ -7,22 +7,20 @@ public class EmbeddingInputBuilder {
             Company: %s
             Period: %s
             Type: %s
-            Industry: %s
-            Supersector: %s
             Sector: %s
             Category: %s
             Sentiment: %s
-            Statement: %s
+            Content: %s
+            Capitalization: %s
             """,
                 statement.getCompanyName(),
                 statement.getPeriod(),
                 statement.getType(),
-                statement.getIndustry(),
-                statement.getSupersector(),
                 statement.getSector(),
                 statement.getCategory(),
                 statement.getSentiment(),
-                statement.getContent()
+                statement.getContent(),
+                statement.getCapitalization()
         );
     }
 }

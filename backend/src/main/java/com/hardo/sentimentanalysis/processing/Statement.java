@@ -23,12 +23,6 @@ public class Statement {
     private String companyName;
 
     @Column(nullable = false)
-    private String industry;
-
-    @Column(nullable = false)
-    private String supersector;
-
-    @Column(nullable = false)
     private String sector;
 
     @Column(nullable = false)
@@ -42,6 +36,12 @@ public class Statement {
 
     @Column(nullable = false)
     private String period;  // Example: "2024", "Q1-2025"
+
+    @Column
+    private String capitalization; // Large, Mid, Small
+
+    @Column
+    private Long reportId; // Foreign key to Report entity
 
     public enum Type {
         company, sector

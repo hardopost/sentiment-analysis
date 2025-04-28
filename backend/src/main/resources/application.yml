@@ -6,21 +6,20 @@ spring:
       ai:
         gemini:
           project-id: statement-analysis-455612
-          location: europe-north1
+          location: us-central1
           chat:
             options:
-              model: gemini-2.0-flash-001
+              model: gemini-2.5-pro-exp-03-25 #gemini-2.0-flash-001
+              tool-calling-enabled: true
         embedding:
           project-id: statement-analysis-455612
-          location: europe-north1
+          location: us-central1
           text:
             options:
-              model: text-embedding-004
+              model: text-embedding-005
               dimensions: 768
               auto-truncate: false
-
-
-
+              task_type: SEMANTIC_SIMILARITY
 
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
@@ -39,7 +38,10 @@ spring:
 
 
 
-
+google:
+  search:
+    api-key: ${GOOGLE_SEARCH_API_KEY}
+    engine-id: ${GOOGLE_SEARCH_ENGINE_ID}
 
 
 

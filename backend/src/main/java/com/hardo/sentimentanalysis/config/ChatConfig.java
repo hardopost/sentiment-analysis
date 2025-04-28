@@ -17,7 +17,7 @@ public class ChatConfig {
     }
 
     @Bean
-    public ChatClient chatClient(ChatClient.Builder builder, StatementContextAdvisor advisor) {
+    public ChatClient chatClient(ChatClient.Builder builder, StatementContextAdvisor advisor) { //
         return builder
                 .defaultAdvisors(List.of(advisor))
                 .build();

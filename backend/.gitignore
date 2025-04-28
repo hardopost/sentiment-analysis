@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Downloaded Annual reports ###
+/reports/
