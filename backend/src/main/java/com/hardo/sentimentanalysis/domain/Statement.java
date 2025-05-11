@@ -1,4 +1,4 @@
-package com.hardo.sentimentanalysis.processing;
+package com.hardo.sentimentanalysis.domain;
 
 import jakarta.persistence.*;
 import lombok.*;

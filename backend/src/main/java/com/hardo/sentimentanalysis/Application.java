@@ -3,7 +3,10 @@ package com.hardo.sentimentanalysis;
 import com.hardo.sentimentanalysis.extraction.ReportDownloadService;
 import com.hardo.sentimentanalysis.importing.ReportImportService;
 import com.hardo.sentimentanalysis.processing.StatementProcessingService;
+import com.hardo.sentimentanalysis.search.AnnualReportScraper;
+import com.hardo.sentimentanalysis.search.MfnReportFinder;
 import com.hardo.sentimentanalysis.search.ReportLinkDiscoveryService;
+import com.hardo.sentimentanalysis.search.ReportLinkFinderService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,19 +31,14 @@ public class Application {
 		};
 	}*/
 
+
 	/*@Bean
-	CommandLineRunner runOnStartup(ReportLinkDiscoveryService discoveryService) {
+	public CommandLineRunner runner(ReportLinkFinderService resolver) {
 		return args -> {
-			discoveryService.discoverAndSaveLinks();
+			resolver.resolveMissingReportLinks("2024");
 		};
 	}*/
 
-	/*@Bean
-	CommandLineRunner runOnStartup(ReportLinkDiscoveryService discoveryService) {
-		return args -> {
-			discoveryService.findMeDownloadLink();
-		};
-	}*/
 
 	/*@Bean
 	CommandLineRunner loadReportsFromCsv(ReportImportService reportImportService, ResourceLoader resourceLoader) {
@@ -56,29 +54,6 @@ public class Application {
 	}*/
 
 	/*@Bean
-	CommandLineRunner run(StatementProcessingService statementProcessingService) {
-		return args -> {
-			try {
-				statementProcessingService.processPdf("pdffile.pdf");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		};*/
-
-	/*@Bean
-	CommandLineRunner commandLineRunner(ChatClient.Builder builder) {
-		return args -> {
-			var chat = builder.build();
-
-			ChatResponse response = chat.prompt("Tell me an interesting fact about Google")
-					.call()
-					.chatResponse();
-
-			System.out.println(response);
-
-		};
-	}*/
-	@Bean
 	CommandLineRunner run(StatementProcessingService service) {
 		return args -> {
 			Path reportsDir = Path.of("reports"); // This matches where your files are saved
@@ -98,17 +73,6 @@ public class Application {
 
 				}
 			}
-		};
-	}
-
-	/*@Bean
-	CommandLineRunner commandLineRunner(GoogleSearchService googleSearchService) {
-		return args -> {
-
-			String query = "Alleima 2024 annual sustainability report site:alleima.com filetype:pdf";
-			String result = googleSearchService.search(query);
-			System.out.println("🔍 Search Result: \n" + result);
-
 		};
 	}*/
 

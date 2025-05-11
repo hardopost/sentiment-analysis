@@ -32,6 +32,13 @@ public class GoogleSearchTool {
         return parseResultsToMap(rawJsonResponse);
     }
 
+    @Tool(description = "Search anything you need from web using Google search. Returns a structured list of results.")
+    public Map<String, Object> searchAnything(String query) { // Return type is Map
+        System.out.println("Tool: Searching for: " + query);
+        String rawJsonResponse = searchService.fetchRawSearchResults(query);
+        return parseResultsToMap(rawJsonResponse);
+    }
+
     private Map<String, Object> parseResultsToMap(String rawJsonResponse) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();

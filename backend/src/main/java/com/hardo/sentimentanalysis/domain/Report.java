@@ -1,6 +1,7 @@
 // Report.java
-package com.hardo.sentimentanalysis.processing;
+package com.hardo.sentimentanalysis.domain;
 
+import com.hardo.sentimentanalysis.processing.OutlookSummaryDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,18 +49,24 @@ public class Report {
     @Column(name = "downloaded")
     private boolean downloaded = false; // Flag to indicate if the report has been downloaded
 
-    @Column(name = "prompt_tokens")
+    @Column(name = "statement_prompt_tokens")
     private Integer promptTokens;
 
-    @Column(name = "completion_tokens")
+    @Column(name = "statement_completion_tokens")
     private Integer completionTokens;
 
-    @Column(name = "total_tokens")
+    @Column(name = "statement_total_tokens")
     private Integer totalTokens;
+
+    @Column(name = "outlook_summary", columnDefinition = "jsonb")
+    private String outlookSummary;
 
     @Column(name = "llm_time_ms")
     private Long llmTimeMs;
 
     @Column(name = "embedding_time_ms")
     private Long embeddingTimeMs;
+
+    @Column(name = "embedding_total_tokens")
+    private Integer embeddingTotalTokens;
 }

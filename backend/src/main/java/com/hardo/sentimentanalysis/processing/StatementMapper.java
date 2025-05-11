@@ -1,5 +1,8 @@
 package com.hardo.sentimentanalysis.processing;
 
+import com.hardo.sentimentanalysis.domain.Report;
+import com.hardo.sentimentanalysis.domain.Statement;
+
 import java.util.UUID;
 
 public class StatementMapper {

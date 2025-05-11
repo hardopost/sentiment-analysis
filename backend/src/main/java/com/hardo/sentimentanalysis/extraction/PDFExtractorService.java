@@ -17,7 +17,15 @@ public class PDFExtractorService {
     public String extractTextFromPDF(File pdfFile) throws IOException {
         try (PDDocument document = Loader.loadPDF(pdfFile)) {
             PDFTextStripper pdfStripper = new PDFTextStripper();
-            return pdfStripper.getText(document);
+            String rawText = pdfStripper.getText(document);
+            return sanitizeText(rawText);
         }
     }
+
+    private String sanitizeText(String input) {
+        if (input == null) return null;
+        // Remove all control characters except \n, \r, and \t
+        return input.replaceAll("[\\x00-\\x1F&&[^\\n\\r\\t]]", "");
+    }
+
 }

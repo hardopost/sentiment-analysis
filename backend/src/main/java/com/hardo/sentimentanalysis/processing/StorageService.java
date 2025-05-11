@@ -1,8 +1,8 @@
 package com.hardo.sentimentanalysis.processing;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hardo.sentimentanalysis.util.LlmResult;
+import com.hardo.sentimentanalysis.domain.Report;
+import com.hardo.sentimentanalysis.domain.Statement;
 import org.springframework.ai.embedding.Embedding;
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -24,8 +24,7 @@ public class StorageService {
     }
 
     @Transactional
-    public void storeStatementsWithEmbeddings(List<Statement> statements, EmbeddingResponse embeddingResponse) {
-        List<Embedding> embeddings = embeddingResponse.getResults();
+    public void storeStatementsWithEmbeddings(List<Statement> statements, List<Embedding> embeddings) {
 
         if (statements.size() != embeddings.size()) {
             throw new IllegalArgumentException("Statements and embeddings size must match.");
@@ -85,30 +84,34 @@ public class StorageService {
     }
 
     @Transactional
-    public void updateReportAfterProcessing(Report report, LlmResult<StatementExtractionResponse> llmResult, long statementProcessingTime, long embeddingProcessingTime) {
+    public void updateReportAfterProcessing(Report report, LlmResult<StatementExtractionResponse> llmResult, String embeddingString, long statementProcessingTime, long embeddingProcessingTime, int embeddingTotalTokens) {
         try {
             String outlookSummaryJson = objectMapper.writeValueAsString(llmResult.output().summary());
 
             jdbcClient.sql("""
             UPDATE report SET
                 report_type = :reportType,
-                outlook_summary = :outlookSummary::jsonb,
-                prompt_tokens = :promptTokens,
-                completion_tokens = :completionTokens,
-                total_tokens = :totalTokens,
+                metadata = :outlookSummary::jsonb,
+                embedding = :outlookEmbedding::vector,
+                statement_prompt_tokens = :statementPromptTokens,
+                statement_completion_tokens = :statementCompletionTokens,
+                statement_total_tokens = :statementTotalTokens,
                 llm_time_ms = :llmTimeMs,
                 embedding_time_ms = :embeddingTimeMs,
-                processed = true
+                processed = true,
+                embedding_total_tokens = :embeddingTotalTokens
             WHERE id = :reportId
         """)
                     .param("reportType", llmResult.output().summary().reportType())
                     .param("outlookSummary", outlookSummaryJson)
-                    .param("promptTokens", llmResult.promptTokens())
-                    .param("completionTokens", llmResult.completionTokens())
-                    .param("totalTokens", llmResult.totalTokens())
+                    .param("outlookEmbedding", embeddingString)
+                    .param("statementPromptTokens", llmResult.promptTokens())
+                    .param("statementCompletionTokens", llmResult.completionTokens())
+                    .param("statementTotalTokens", llmResult.totalTokens())
                     .param("llmTimeMs", statementProcessingTime)
                     .param("embeddingTimeMs", embeddingProcessingTime)
                     .param("reportId", report.getId())
+                    .param("embeddingTotalTokens", embeddingTotalTokens)
                     .update();
         } catch (Exception e) {
             throw new RuntimeException("Failed to update report after processing", e);

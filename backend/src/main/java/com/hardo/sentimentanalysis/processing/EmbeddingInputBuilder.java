@@ -1,8 +1,12 @@
 package com.hardo.sentimentanalysis.processing;
 
+import com.hardo.sentimentanalysis.domain.Report;
+import com.hardo.sentimentanalysis.domain.Statement;
+
+
 public class EmbeddingInputBuilder {
 
-    public static String buildEmbeddingInput(Statement statement) {
+    public static String buildEmbeddingInputForStatement(Statement statement) {
         return String.format("""
             Company: %s
             Period: %s
@@ -22,5 +26,27 @@ public class EmbeddingInputBuilder {
                 statement.getContent(),
                 statement.getCapitalization()
         );
+    }
+
+    public static String buildEmbeddingInputForReport(Report report, OutlookSummaryDTO summary) {
+
+        return String.format("""
+        Company: %s
+        Period: %s
+        Capitalization: %s
+        Report Type: %s
+        Summary: %s
+        Tone: %s
+        Positive Drivers: %s
+        Negative Drivers: %s
+        """,
+                report.getCompanyName(),
+                report.getPeriod(),
+                report.getCapitalization(),
+                summary.reportType(),
+                summary.summary(),
+                summary.tone(),
+                String.join(", ", summary.positiveDrivers()),
+                String.join(", ", summary.negativeDrivers()));
     }
 }

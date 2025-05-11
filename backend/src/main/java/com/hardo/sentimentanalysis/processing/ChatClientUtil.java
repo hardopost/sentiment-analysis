@@ -1,4 +1,4 @@
-package com.hardo.sentimentanalysis.util;
+package com.hardo.sentimentanalysis.processing;
 
 
 import org.springframework.ai.chat.client.ChatClient;
@@ -6,8 +6,12 @@ import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.core.ParameterizedTypeReference;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ChatClientUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(ChatClientUtil.class);
     private static final int GEMINI_25_PRO_EXP_03_25 = 65536;
 
     public static <T> LlmResult<T> sendPromptWithTokenInfo(
@@ -20,23 +24,24 @@ public class ChatClientUtil {
                 .call()
                 .responseEntity(responseType);
 
-        T output = responseEntity.getEntity();
         ChatResponse chatResponse = responseEntity.getResponse();
         if (chatResponse == null) {
             throw new IllegalStateException("Chat response is null");
         }
-        int promptTokens = chatResponse.getMetadata().getUsage().getPromptTokens();
-        int completionTokens = chatResponse.getMetadata().getUsage().getCompletionTokens();
-        int totalTokens = chatResponse.getMetadata().getUsage().getTotalTokens();
+
+        var usage = chatResponse.getMetadata().getUsage();
+        int promptTokens = usage.getPromptTokens();
+        int completionTokens = usage.getCompletionTokens();
+        int totalTokens = usage.getTotalTokens();
 
         if (completionTokens >= GEMINI_25_PRO_EXP_03_25 - 100) {
-            System.out.printf("⚠️ Completion tokens (%d) are near Gemini Flash limit (%d). Response may be truncated!%n",
+            logger.warn("Completion tokens ({}) are near Gemini Flash limit ({}). Response may be truncated!",
                     completionTokens, GEMINI_25_PRO_EXP_03_25);
         }
 
-        System.out.printf("✅ Prompt tokens: %d, Completion tokens: %d, Total: %d%n",
+        logger.info("Prompt tokens: {}, Completion tokens: {}, Total: {}",
                 promptTokens, completionTokens, totalTokens);
 
-        return new LlmResult<T>(output, promptTokens, completionTokens, totalTokens);
+        return new LlmResult<>(responseEntity.getEntity(), promptTokens, completionTokens, totalTokens);
     }
 }

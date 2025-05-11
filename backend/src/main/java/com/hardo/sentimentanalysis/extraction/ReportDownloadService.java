@@ -1,7 +1,7 @@
 package com.hardo.sentimentanalysis.extraction;
 
-import com.hardo.sentimentanalysis.processing.Report;
-import com.hardo.sentimentanalysis.processing.ReportRepository;
+import com.hardo.sentimentanalysis.domain.Report;
+import com.hardo.sentimentanalysis.domain.ReportRepository;
 import org.asynchttpclient.*;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ReportDownloadService {
@@ -36,71 +37,37 @@ public class ReportDownloadService {
             throw new RuntimeException("❌ Failed to create output directory", e);
         }
 
-        List<Future<Void>> downloadFutures = new ArrayList<>();
-
         for (Report report : reports) {
-            String fileUrl = report.getDownloadLink();
-            String safeFileName = generateFileName(report);
-            Path outputPath = outputDir.resolve(safeFileName);
-
-            Future<Void> future =
-                    httpClient.prepareGet(fileUrl)
-                            .setHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
-                                    "(KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36")
-                            .execute(new AsyncCompletionHandler<>() {
-
-                private FileOutputStream stream;
-
-                @Override
-                public State onBodyPartReceived(HttpResponseBodyPart bodyPart) throws Exception {
-                    if (stream == null) {
-                        stream = new FileOutputStream(outputPath.toFile());
-                    }
-                    int written = stream.getChannel().write(bodyPart.getBodyByteBuffer());
-                    //System.out.printf("⬇️  Writing %d bytes for %s%n", written, report.getCompanyName());
-                    return State.CONTINUE;
-                }
-
-                @Override
-                public Void onCompleted(Response response) throws Exception {
-                    if (stream != null) {
-                        stream.flush();
-                        stream.close();
-                    }
-
-                    long fileSize = Files.size(outputPath);
-                    if (fileSize < 10240) { // less than 1KB
-                        System.out.println("⚠️ Skipped (too small): " + safeFileName + " (" + fileSize + " bytes)");
-                        // optionally delete small file
-                        Files.deleteIfExists(outputPath);
-                        return null;
-                    }
-
-                    report.setDownloaded(true);
-                    reportRepository.save(report);
-                    System.out.println("✅ Downloaded: " + safeFileName);
-                    return null;
-                }
-
-                @Override
-                public void onThrowable(Throwable t) {
-                    System.err.println("❌ Failed to download for " + report.getCompanyName() + ": " + t.getMessage());
-                    if (stream != null) {
-                        try {
-                            stream.close();
-                        } catch (IOException ignored) {}
-                    }
-                }
-            });
-
-            downloadFutures.add(future);
-        }
-
-        for (Future<Void> future : downloadFutures) {
             try {
-                future.get(); // Wait for all downloads to complete
+                String fileUrl = report.getDownloadLink();
+                String safeFileName = generateFileName(report);
+                Path outputPath = outputDir.resolve(safeFileName);
+
+                System.out.printf("⬇️ Downloading: %s → %s%n", report.getCompanyName(), fileUrl);
+
+                byte[] fileBytes = httpClient.prepareGet(fileUrl)
+                        .setHeader("User-Agent", "Mozilla/5.0")
+                        .execute()
+                        .toCompletableFuture()
+                        .get(120, TimeUnit.SECONDS)
+                        .getResponseBodyAsBytes();
+
+                Files.write(outputPath, fileBytes);
+
+                if (fileBytes.length < 10240) {
+                    System.out.println("⚠️ Skipped (too small): " + safeFileName + " (" + fileBytes.length + " bytes)");
+                    Files.deleteIfExists(outputPath);
+                    continue;
+                }
+
+                report.setDownloaded(true);
+                reportRepository.save(report);
+                System.out.println("✅ Downloaded: " + safeFileName);
+
+                Thread.sleep(500); // Optional: rate limiting
+
             } catch (Exception e) {
-                System.err.println("❌ Error waiting for download to complete: " + e.getMessage());
+                System.err.println("❌ Failed to download for " + report.getCompanyName() + ": " + e.getMessage());
             }
         }
     }

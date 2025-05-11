@@ -1,11 +1,13 @@
 package com.hardo.sentimentanalysis.processing;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.hardo.sentimentanalysis.domain.Report;
+import com.hardo.sentimentanalysis.domain.ReportRepository;
+import com.hardo.sentimentanalysis.domain.Statement;
+import com.hardo.sentimentanalysis.domain.StatementRepository;
 import com.hardo.sentimentanalysis.extraction.PDFExtractorService;
 
 
-import com.hardo.sentimentanalysis.util.ChatClientUtil;
-import com.hardo.sentimentanalysis.util.LlmResult;
 import org.slf4j.Logger;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.SystemMessage;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+
 
 
 import java.io.File;
@@ -36,18 +39,16 @@ public class StatementProcessingService {
     private final PDFExtractorService pdfExtractorService;
     private final ChatClient chatClient;
     private final EmbeddingModel embeddingModel;
-    private final ObjectMapper objectMapper;
     private final ReportRepository reportRepository;
     private final StorageService storageService;
     @Value("classpath:prompts/extract-prompt.txt")
     private Resource extractPrompt;
 
 
-    public StatementProcessingService(PDFExtractorService pdfExtractorService, ChatClient.Builder builder, StatementRepository statementRepository, EmbeddingModel embeddingModel , ObjectMapper objectMapper, ReportRepository reportRepository, StorageService storageService) {
+    public StatementProcessingService(PDFExtractorService pdfExtractorService, ChatClient.Builder builder, StatementRepository statementRepository, EmbeddingModel embeddingModel, ReportRepository reportRepository, StorageService storageService) {
         this.pdfExtractorService = pdfExtractorService;
         this.chatClient = builder.defaultOptions(ChatOptions.builder().temperature(0.0d).build()).build();
         this.embeddingModel = embeddingModel;
-        this.objectMapper = objectMapper;
         this.reportRepository = reportRepository;
         this.storageService = storageService;
     }
@@ -94,15 +95,21 @@ public class StatementProcessingService {
 
         String reportText = pdfExtractorService.extractTextFromPDF(pdfFile);
 
-        String estimatedTokens = String.valueOf(estimateTokenCount(reportText));
-        System.out.println("Estimated tokens: " + estimatedTokens);
+        int estimatedReportTextTokenCount = estimateTokenCount(reportText);
+        int estimatedExtractPromptTokenCount = estimateTokenCount(extractPrompt.toString());
+        String estimatedTotalTokens = String.valueOf(estimatedReportTextTokenCount + estimatedExtractPromptTokenCount);
+        System.out.println("Estimated report tokens: " + estimatedReportTextTokenCount);
+        System.out.println("Estimated prompt tokens: " + estimatedExtractPromptTokenCount);
+        System.out.println("Estimated total tokens: " + estimatedTotalTokens);
 
 
+
+        //Prompt
         var systemMessage = new SystemMessage(extractPrompt);
         var userMessage = new UserMessage(reportText);
-
         Prompt prompt = new Prompt(List.of(systemMessage, userMessage));
 
+        //Extracting statements and company summary
         long statementProcessingStartTime = System.currentTimeMillis();
         LlmResult<StatementExtractionResponse> llmResult = ChatClientUtil.sendPromptWithTokenInfo(
                 chatClient,
@@ -115,12 +122,13 @@ public class StatementProcessingService {
 
         logger.info("Extracted {} statements from text.", llmResult.output().statements().size());
 
+        // structuring LLM output
         List<Statement> statementEntities = llmResult.output().statements().stream()
                 .map(dto -> StatementMapper.fromReportAndStatementDTO(dto, report))
                 .toList();
 
         List<String> enrichedStatements = statementEntities.stream()
-                .map(EmbeddingInputBuilder::buildEmbeddingInput)  // statement -> EmbeddingInputBuilder.buildEmbeddingInput(statement)
+                .map(EmbeddingInputBuilder::buildEmbeddingInputForStatement)  // statement -> EmbeddingInputBuilder.buildEmbeddingInput(statement)
                 .toList();                                        // "[Company: Alfa Laval] [Category: Revenue Growth Expectations] ... We expect revenue to grow by 10% next year."
 
         for (String enrichedStatement : enrichedStatements) {
@@ -128,25 +136,40 @@ public class StatementProcessingService {
         }
 
         // Send statements to embedding model and get List<Embedding> embeddings and Metadata
+        /*logger.info("Sending {} statements to embedding model.", enrichedStatements.size());
         long embeddingStartTime = System.currentTimeMillis();
         EmbeddingResponse embeddingResponse = embeddingModel.embedForResponse(enrichedStatements);
         long embeddingEndTime = System.currentTimeMillis();
         long embeddingProcessingTimeMs = embeddingEndTime - embeddingStartTime;
         logger.info("Created {} embeddings from statements.", embeddingResponse.getResults().size());
-        logger.info("Embedding metadata: {}", embeddingResponse.getMetadata());
+        logger.info("Embedding metadata: {}", embeddingResponse.getMetadata());*/
 
-        //With experimental embedding model need to send Strings one by one
-        /*List<Embedding> embeddings = new ArrayList<>();
+        // Split into batches of 250, because embedding model has a limit of instances
+        List<List<String>> batches = Lists.partition(enrichedStatements, 200);
+
+        List<Embedding> allEmbeddings = new ArrayList<>();
+
+        int embeddingTotalTokens = 0;
+        logger.info("Sending {} statements to embedding model.", enrichedStatements.size());
         long embeddingStartTime = System.currentTimeMillis();
-        for (String enrichedStatement : enrichedStatements) {
-            Embedding embedding = embeddingModel.embedForResponse(List.of(enrichedStatement)).getResult();
-            logger.info("Embedding: {}", Arrays.toString(embedding.getOutput()));
-            embeddings.add(embedding);
+        for (int i = 0; i < batches.size(); i++) {
+            List<String> batch = batches.get(i);
+            logger.info("Sending batch {} with {} statements", i + 1, batch.size());
+            EmbeddingResponse response = embeddingModel.embedForResponse(batch);
+            embeddingTotalTokens += response.getMetadata().getUsage().getTotalTokens();
+
+            allEmbeddings.addAll(response.getResults());
         }
-        logger.info("Created {} embeddings from statements.", embeddings.size());*/
+        long embeddingEndTime = System.currentTimeMillis();
+        long embeddingProcessingTimeMs = embeddingEndTime - embeddingStartTime;
+        logger.info("Created {} embeddings from statements.", allEmbeddings.size());
+        logger.info("Embedding total tokens: {}", embeddingTotalTokens);
+
+
+
 
         // Store Statement and Embeddings to database
-        storageService.storeStatementsWithEmbeddings(statementEntities, embeddingResponse); //embeddingResponse
+        storageService.storeStatementsWithEmbeddings(statementEntities, allEmbeddings); //embeddingResponse
 
 
 
@@ -158,8 +181,18 @@ public class StatementProcessingService {
         System.out.println("LLM time: " + statementProcessingTimeMs);
         System.out.println("Embedding time: " + embeddingProcessingTimeMs);
 
-        storageService.updateReportAfterProcessing(report, llmResult, statementProcessingTimeMs, embeddingProcessingTimeMs);
-    }
+        // Create embedding string for a company summary
+        String input = EmbeddingInputBuilder.buildEmbeddingInputForReport(report, llmResult.output().summary());
+        System.out.println("Input for embedding: " + input);
+        EmbeddingResponse embeddingResponse = embeddingModel.embedForResponse(List.of(input));
+        Embedding embedding = embeddingResponse.getResults().getFirst();
+        String companySummaryEmbeddingString = Arrays.toString(embedding.getOutput());
+        embeddingTotalTokens += embeddingResponse.getMetadata().getUsage().getTotalTokens();
 
+        //Update report with LLM output and embedding
+        storageService.updateReportAfterProcessing(report, llmResult, companySummaryEmbeddingString, statementProcessingTimeMs, embeddingProcessingTimeMs, embeddingTotalTokens);
+
+        logger.info("Report {} processed successfully.", report.getCompanyName());
+    }
 }
 

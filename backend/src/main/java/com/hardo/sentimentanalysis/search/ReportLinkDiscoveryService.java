@@ -1,13 +1,10 @@
 package com.hardo.sentimentanalysis.search;
 
-import com.hardo.sentimentanalysis.processing.Report;
-import com.hardo.sentimentanalysis.processing.ReportRepository;
+import com.hardo.sentimentanalysis.domain.Report;
+import com.hardo.sentimentanalysis.domain.ReportRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,30 +28,32 @@ public class ReportLinkDiscoveryService {
     }
 
     public void discoverAndSaveLinks() {
-        //List<Report> reports = reportRepository.findAll();
-
-        Pageable pageable = PageRequest.of(0, 10); // page 0, size 10
-        List<Report> reports = reportRepository.findAll(pageable).getContent();
+        List<Report> reports = reportRepository.findAllById(List.of(13L, 14L, 15L, 16L, 17L, 18L, 19L, 20L, 21L, 22L)); // Adjust page size as needed
 
         for (Report report : reports) {
             if (report.getDownloadLink() != null) continue; // Skip already resolved ones
 
 
-            String query = String.format(
+            /*String query = String.format(
                     "after:2025-01-01 \"%s\" (\"annual report 2024\" OR \"year-end report 2024\") filetype:pdf (download OR -download)",
+                    report.getCompanyName()
+            );*/
+
+            String query = String.format(
+                    "site:mb.cision.com %s 2024 annual report filetype:pdf",
                     report.getCompanyName()
             );
 
             String fallbackQuery = String.format(
-                    "after:2025-01-01 \"%s\" (\"2024 interim q4 report\" OR \"2024 annual financial report\") filetype:pdf (download OR -download)",
+                    "site:storage.mfn.se %s 2024 annual report filetype:pdf",
                     report.getCompanyName()
             );
-
 
 
             String bestLink = tryGetLink(report.getCompanyName(), query);
 
             if (bestLink == null) {
+                System.out.println("❌ No link found for: " + report.getCompanyName());
                 System.out.println("🔁 Retrying alternative search for: " + report.getCompanyName());
                 bestLink = tryGetLink(report.getCompanyName(), fallbackQuery);
             }
@@ -87,17 +86,12 @@ public class ReportLinkDiscoveryService {
                 "However if there are no candidates for reports in the list above, reply with 'No good candidate'.");*/
         StringBuilder m1 = new StringBuilder("Below are the results of a Google search for the 2024 Annual report of OMX Nasdaq Stockholm main list company ").append(companyName).append(".\n");
         String m2 = """
-                Your task is to choose the PDF file download link of the company's report that is one of the 5 types listed below. Prefer report that is higher in the list, if
-                the report type higher in the list is not available, return the download link to type of report that is lower in the list:
-                1. 2024 annual report,
-                2. 2024 year-end and q4 report,
-                3. 2024 interim q4 report,
-                4. 2024 annual financial report,
-                5. 2024 annual and sustainability report
-                Avoid links to presentations.
-                Prefer the report that is in English language, if report is not available in English, report in Swedish language is also suitable. 
-                Reply with only the link.
-                If none of the reports defined in the list above are among the search results, reply with 'No good candidate found'.
+                Your task is to extract the PDF file download link of the company's 2024 Annual Report or 2024 Annual and Sustainability Report
+                - do not extract link to presentation
+                - prefer the report that is in English language, if report is not available in English, report in Swedish language is also suitable.
+                - reply with only the link.
+             
+                If no link is found that matches the conditions, reply with 'No good candidate found'.
                 """;
         StringBuilder message = new StringBuilder(m1).append(m2);
 
@@ -109,6 +103,7 @@ public class ReportLinkDiscoveryService {
 
         var userMessage = message.toString();
         //System.out.println("Test print: " + testPrint);
+        System.out.println("Message: " + message);
 
         //var userMessage = new UserMessage(message.toString());
         //Prompt prompt = new Prompt(List.of(systemMessage, userMessage));

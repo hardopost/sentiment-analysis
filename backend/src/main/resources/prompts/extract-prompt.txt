@@ -7,6 +7,7 @@
                 Instructions:
 
                 1. Identify and extract all and only forward-looking statements. Ensure that no forward-looking statement is missed. Do not include statements about past or current performance unless they clearly express an expectation about the future.
+
                    Do not extract forward-looking statements related solely to ESG (Environmental, Social, Governance) goals, sustainability targets, or corporate responsibility initiatives (e.g., carbon emission reductions, diversity targets, workplace safety metrics) unless they are directly linked to core financial, operational, or market performance expectations.
 
                    For example, skip statements like:
@@ -16,7 +17,8 @@
                    However, if an ESG-related statement is explicitly tied to revenue, profitability, liquidity, competitiveness, operational expansion, or product/service innovation, you should extract it.
 
                    Each extracted forward-looking statement must be self-contained and understandable without additional context.
-                   When extracting forward-looking statements, ensure that each statement is **fully self-contained**.
+
+                   When extracting forward-looking statements, ensure that each statement is **fully self-contained**:
                    - Do not extract statements that use vague pronouns like "this," "these," "it," "such," or "they" to refer to something mentioned earlier without explicitly naming it.
                    - Instead, **rewrite** the statement to make the subject or object clear and fully understandable in isolation.
 
@@ -32,39 +34,81 @@
                    - "The successful refinancing of our debt will strengthen our liquidity position."
                    - "The investments in new retail locations are expected to drive future growth."
 
-                  **Important:**
-                  If you cannot confidently resolve what "this", "it", or "these" refers to, **do not extract the statement at all**.
-                  Only include forward-looking statements where the meaning is explicit and understandable on its own.
+                   **Important:**
+                   If you cannot confidently resolve what "this", "it", or "these" refers to, **do not extract the statement at all**.
+                   Only include forward-looking statements where the meaning is explicit and understandable on its own.
                    The extracted statement will be used as the "content" field in the output structure.
 
-                   Also, if a forward-looking statement contains a numeric projection about future growth (e.g., CAGR or revenue forecast for future years), rewrite it into a full English sentence including the subject, the growth metric, and the time period.
-                   Example: "Solar energy market CAGR 8% (2024-2029)" → "The solar energy market is expected to grow at a compound annual growth rate (CAGR) of 8% between 2024 and 2029."
+                   If a forward-looking statement contains a numeric projection about future growth (e.g., CAGR or revenue forecast for future years), rewrite it into a full English sentence including the subject, the growth metric, and the time period.
+                   Example:
+                   "Solar energy market CAGR 8% (2024–2029)" → "The solar energy market is expected to grow at a compound annual growth rate (CAGR) of 8% between 2024 and 2029."
+
+                   Avoid redundancy: If two extracted statements express the same idea in different wording, extract only the most specific or most complete version. Do not include near-duplicates in the output.
+
+                   Do not extract purely hypothetical or speculative scenario statements.
+                   If a statement discusses imagined futures (e.g., climate scenarios like “Under RCP 2.6…” or “If X happens…”), skip it unless the company explicitly links the scenario to a clear business expectation, competitive impact, or future plan.
+
+                   Extract if:
+                   “Under RCP 2.6, local production will become a competitive advantage for the company, and we plan to expand accordingly.”
+                   Do not extract if:
+                   “Under RCP 2.6, there will be more opportunities for circular economy solutions.” (no specific company action or expectation)
 
                    Quick Validation Before Extraction:
 
-                   Use these examples to validate if a statement should be extracted:
-
                    Extract examples:
-                   "We expect revenue to grow by 8% in 2025."
-                   "Our operating margin is expected to improve next year."
-                   "The construction sector is projected to face labor shortages by 2025."
-                   "New investments in R&D are planned to drive product innovation over the next three years."
+                   - "We expect revenue to grow by 8% in 2025."
+                   - "Our operating margin is expected to improve next year."
+                   - "The construction sector is projected to face labor shortages by 2025."
+                   - "New investments in R&D are planned to drive product innovation over the next three years."
 
                    Skip examples:
-                   "We have a strong R&D culture." (present description, no future expectation)
-                   "Our employee satisfaction rate is currently high." (current status, not future)
-                   "The annual report will be published on April 1, 2025." (administrative, not performance-related)
-                   "We aim to reduce our carbon footprint by 2030." (ESG-only without financial/operational impact)
-
-                   Only after passing this validation, proceed to categorization.
+                   - "We have a strong R&D culture." (present description, no future expectation)
+                   - "Our employee satisfaction rate is currently high." (current status, not future)
+                   - "The annual report will be published on April 1, 2025." (administrative, not performance-related)
+                   - "We aim to reduce our carbon footprint by 2030." (ESG-only without financial/operational impact)
 
                 2. For each extracted statement, assign a type as either "company" or "sector":
-                   - Use "company" if the statement refers to how the company sees its own future performance.
-                   - Use "sector" if the statement refers to how the company sees the industry or sector it operates in, without referencing the company itself.
 
-                   Then, classify the statement under one of the predefined categories from the EXAMPLES section:
-                   - 1. Company-Specific Forward-Looking Statement Categories & Examples
-                   - 2. Sector-Specific Forward-Looking Statement Categories & Examples
+                    - Use "company" if the statement refers to how the company sees its own future performance, strategy, plans, or risks.
+                    - Use "sector" if the statement refers to how the company sees the industry or sector as a whole, without focusing on its own expected performance.
+
+                    Then, classify the statement under one of the predefined categories from the EXAMPLES section:
+                    - 1. Company-Specific Forward-Looking Statement Categories & Examples
+                    - 2. Sector-Specific Forward-Looking Statement Categories & Examples
+
+                    Categorization Rules – DO NOT Cross-Type Company and Sector Statements
+
+                    - If the statement expresses the company’s own expectations, plans, strategy, risks, or outlook, label it as type: company and use only company-specific categories.
+                    - If the statement expresses an outlook on the overall sector, market conditions, or broad industry dynamics, label it as type: sector and use only sector-specific categories.
+                    - If the sentence mentions sector context but also includes a clear company-specific expectation, extract it as type: company and assign a company-specific category.
+
+                    Do not assign sector categories like "Expected Sector Growth" or "Technological Advancements" to type: company statements.
+                    Do not assign company categories like "Revenue Growth Expectations" or "Financial Stability" to type: sector statements.
+
+                    Special Clarification – Demand & Consumer Trends
+
+                    There are both company-specific and sector-specific categories related to demand:
+
+                    - Use Company-Specific Product Demand & Consumer Trends for expectations about demand for the company’s own products or services.
+                    - Use Sector-Specific Demand & Consumer Trends for broader consumer behaviors or preferences affecting the entire industry or sector.
+
+                    Important Clarification – When the company name is mentioned but the forecast is about the sector or general consumer trends:
+
+                    If a statement uses the company name (e.g., “Avanza expects…” or “Autoliv believes…”) but the forecast or outlook concerns:
+
+                    - the market or industry as a whole (e.g., “the automotive safety market,” “the Swedish savings market”), or
+                    - broad consumer or macroeconomic trends (e.g., “young people will prefer digital banking,” “interest rates will remain high”),
+                      then label the statement as type: sector, even if the company is grammatically the subject.
+
+                    Only label as type: company if the statement clearly reflects the company’s own expected performance, plans, or strategy.
+
+                    If a sector-wide trend or consumer behavior is mentioned but is explicitly tied to the company’s own future revenue, growth, market position, or business strategy, then classify it as type: company.
+
+                    Examples:
+                    "Avanza believes that young people will prefer digital banking in the future." then type: sector
+                    "Avanza believes that young people will prefer digital banking in the future, and expects this to drive growth in its digital platform revenue." then type: company
+
+
 
                 3. Label each statement with a sentiment as one of the following:
                    - "Positive" – expresses growth, improvement, or opportunity
@@ -73,19 +117,20 @@
 
                 4. Extract the company name.
 
-                5. Extract the sector(s) where the company operates. To classify sectors, use the list of 11 sectors below.
+                5. Extract the sector where the company operates and assign a sector to each forward-looking statement.
 
-                   Each extracted forward-looking statement must belong to exactly one sector.
+                   Each forward-looking statement must be assigned to exactly one of the following 11 sectors:
+                   Technology, Telecommunications, Health Care, Financials, Real Estate, Consumer Discretionary, Consumer Staples, Industrials, Basic Materials, Energy, Utilities
 
-                   - If the statement is directly related to a company's future business performance, but none of the listed sectors apply, label the sector as "other".
-                   - Do not extract statements related to administrative announcements, report publication dates, financial calendar events, or other corporate technical notices.
-
-                   The sector must be one of the following:
-                   Technology, Telecommunications, Health Care, Financials, Real Estate, Consumer Discretionary, Consumer Staples, Industrials, Basic Materials, Energy, Utilities.
+                   - Assign each statement based on the sector that best represents the company’s core business activity.
+                   - If a statement concerns generic topics such as taxes, pensions, or risk factors, classify it under the company’s main operating sector, as these topics affect its future performance within that domain.
+                   - Do not use "Other" — all statements must be assigned to one of the sectors listed above.
+                   - Do not extract statements related to administrative announcements, financial calendar events, report publication timing, or other technical notices that do not pertain to future business performance.
 
                 6. Extract the period of the annual report (as a four-digit year, e.g. 2023).
 
                 7. If the statement is in Swedish, translate it to English before including it in the output.
+
 
                 ### EXAMPLES ###
                 1. Company-Specific forward-looking statements, Categories & Examples:
@@ -110,6 +155,11 @@
                 Negative: "The company anticipates increased competition to put pressure on its current market position."
                 Neutral: "The company expects its market share to remain steady in its primary business segments."
 
+                Company-Specific Product Demand & Consumer Trends:
+                Positive: "The company expects continued demand growth for its high-quality plant-based fats in the food sector."
+                Negative: "Euro-food AB anticipates declining demand for certain processed oils due to shifting consumer preferences."
+                Neutral: "The company expects demand for its key product categories to remain at current levels."
+
                 Product & Service Innovation:
                 Positive: "The company is developing an AI-driven customer platform expected to enhance its service offerings."
                 Negative: "Budget constraints in the R&D department may delay the rollout of new product features."
@@ -120,6 +170,11 @@
                 Negative: "Liquidity concerns related to debt maturities may affect the company’s ability to fund operations."
                 Neutral: "The company expects to maintain sufficient liquidity to meet its ongoing financial obligations."
 
+                Company-Specific Risks & Challenges:
+                Positive: "We expect to reduce exposure to geopolitical risks through regional diversification."
+                Negative: "Rising regulatory complexity poses a challenge for the company’s operations in key markets."
+                Neutral: "We anticipate stable risk exposure in the coming year."
+
                 2. Sector-Specific forward-looking statements, Categories & Examples:
 
                 Expected Sector Growth:
@@ -127,10 +182,10 @@
                 Negative: "The apparel retail sector is projected to contract over the next two years due to inflationary pressure on consumers."
                 Neutral: "Analysts expect the automotive manufacturing sector to maintain its current size without significant expansion or contraction."
 
-                Demand & Consumer Trends:
+                Sector-Specific Demand & Consumer Trends:
                 Positive: "Consumer demand for plant-based food products is anticipated to rise steadily across European markets."
                 Negative: "There is a declining trend in consumer interest in traditional television broadcasting services."
-                Neutral: "The company expects demand for packaged household goods to remain broadly consistent with previous years."
+                Neutral: "Demand in the packaged household goods sector is expected to remain broadly consistent with previous years."
 
                 Technological Advancements & Innovation:
                 Positive: "Advancements in AI and automation are expected to significantly enhance operational efficiency in the logistics sector."
@@ -155,15 +210,15 @@
 
                 Part 2: Summarize the Company’s Forward-Looking Outlook
 
-                After completing Part 1, use the extracted forward-looking statements of type "company" to generate a brief, structured outlook summary for the company.
+                After completing Part 1, use the extracted forward-looking statements of type "company" and also the company's own statements of type "sector" to generate a brief, structured outlook summary for the company.
 
                 When generating the summary:
 
-                - Focus primarily on the extracted forward-looking statements from Part 1.
-                - You may refer to present or historical information from the report **only if it is directly relevant** to explaining the company's future expectations (e.g., current investments, current market position, financial stability).
-                - Do not base the summary primarily on present or past performance if no forward-looking expectation is attached.
+                - Focus primarily on the extracted forward-looking statements from Part 1 that appear in this company’s own report.
+                - You may include present or historical information from the report **only if it is directly relevant** to explaining a forward-looking expectation (e.g., current investments, recent acquisitions, financial stability, etc.).
+                - Do not base the summary primarily on present or past performance unless it is clearly tied to a future plan, goal, or risk.
 
-                The goal is to create a clear and factual description of how the company expects to perform in the future, supported by relevant present conditions if necessary.
+                The goal is to create a clear and factual description of how the company expects to perform in the future, supported by relevant present conditions where needed.
 
                 Your output must follow this exact JSON structure:
 
@@ -177,32 +232,47 @@
 
                 Instructions:
 
-                1. **Summary Content:**
+                1. **Summary Content**
 
-                Summarize how the company expects its future performance to evolve, based primarily on extracted forward-looking statements. You may include present or historical information from the report if it is directly relevant to explaining the company’s future expectations.
+                Summarize how the company expects its future performance to evolve, based on both:
+                - Its forward-looking statements of type "company"
+                - Its own forward-looking statements of type "sector"
+
+                Include present or historical information only when necessary to clarify or explain those forward-looking statements.
 
                 Cover the following themes where information is available:
+
+                Company-specific expectations:
                 - Revenue and Growth Expectations
                 - Profitability and Margin Trends
                 - Operational Expansion and Investments
                 - Market Share and Competitive Position
+                - Company-Specific Product Demand & Consumer Trends
                 - Product and Service Innovation
                 - Financial Stability and Liquidity
+                - Company-Specific Risks & Challenges
 
-                The summary should be clear, factual, and concise — about **3 to 5 sentences**.
+                Sector-specific expectations:
+                - Expected Sector Growth
+                - Sector-Specific Demand & Consumer Trends
+                - Technological Advancements & Innovation
+                - Competitive Landscape & Market Position
+                - Interest Rate & Financial Environment
+                - Industry-Specific Risks & Challenges
 
-                Avoid overly long or narrative text. Keep the focus tightly on how the company sees its future prospects, supported by relevant present conditions if necessary.
+                The summary should be clear, factual, and concise — about 4 to 6 sentences. Avoid narrative writing. Focus tightly on what the company expects, supported by relevant conditions if needed.
 
                 **Example of a good summary:**
+                "The company expects moderate revenue growth over the next two years, driven by investments in clean energy solutions and the launch of new AI-based product innovations. While profit margins are expected to remain stable, management notes that rising supply chain costs could create headwinds. Current strong liquidity and a solid market share in core segments are expected to support planned expansion into new European markets."
 
-                > "The company expects moderate revenue growth over the next two years, driven by investments in clean energy solutions and the launch of new AI-based product innovations. While profit margins are expected to remain stable, management notes that rising supply chain costs could create headwinds. Current strong liquidity and a solid market share in core segments are expected to support planned expansion into new European markets."
+                **Avoid this type of summary:**
+                "The company is working on many interesting projects and is optimistic about the future. The sector is full of opportunities and challenges. With the right strategy, success is possible."
 
-                2. **Drivers of Growth or Decline:**
-                Identify the main themes that influence the company's future outlook — both **positive enablers** and **negative risks or constraints**. List short keywords or phrases that capture these themes based on the extracted forward-looking statements.
+                2. **Drivers of Growth or Decline**
 
-                These "drivers" may include factors contributing to growth (e.g. innovation, demand) or decline (e.g. regulation, cost pressure, market contraction).
+                Identify the main themes that influence the company's future outlook — both positive enablers and negative risks or constraints. List short keywords or phrases that capture these themes based on the extracted forward-looking statements.
 
-                **Examples of drivers:**
+                Examples:
                 - "AI-driven product innovation"
                 - "clean energy transition"
                 - "cost optimization initiatives"
@@ -212,34 +282,35 @@
                 - "competitive pricing pressure"
                 - "regulatory uncertainty"
 
-                3. **Tone of the Summary:**
-                   Assign an overall tone based on the extracted statements:
-                   - "positive" — if statements mainly express growth, improvement, expansion, or innovation
-                   - "negative" — if statements mainly express risks, decline, financial weakness, or uncertainty
-                   - "neutral" — if there is no dominant positive or negative sentiment
+                3. **Tone of the Summary**
 
-                   **Examples of tone assignment:**
-                   - If most statements are about expansion, innovation, and stable profitability → **positive**
-                   - If most statements mention risks like inflation pressure or competitive threats → **negative**
-                   - If statements are balanced without a clear positive or negative tilt → **neutral**
+                Assign an overall tone based on the extracted statements:
+                - "positive" — if statements mainly express growth, improvement, expansion, or innovation
+                - "negative" — if statements mainly express risks, decline, financial weakness, or uncertainty
+                - "neutral" — if there is no dominant positive or negative sentiment
 
-                4. **Extract Report Type:**
-                   Identify and extract what type of report this document is. Use only one of the following categories:
-                   - "Annual Report"
-                   - "Year-End Report and Q4 Report"
-                   - "Interim Year-End Report"
-                   - "Annual and Sustainability Report"
+                Examples:
+                - If most statements are about expansion, innovation, and stable profitability, then **positive**
+                - If most statements mention risks like inflation or competitive threats, then **negative**
+                - If statements are balanced without clear positive or negative tilt, then **neutral**
 
-                   **How to detect:**
-                   - Look at the report's title, headers, metadata, or introductory text.
-                   - If you cannot detect the exact report type confidently, label it as "Annual Report" by default.
+                4. **Extract Report Type**
 
-                   **Examples:**
-                   - If the report title includes "Annual and Sustainability Report 2024", set `"reportType": "Annual and Sustainability Report"`.
-                   - If the report is named "Year-End Report and Fourth Quarter 2024", set `"reportType": "Year-End Report and Q4 Report"`.
+                Identify and extract the type of report. Use only one of:
+                - "Annual Report"
+                - "Year-End Report and Q4 Report"
+                - "Interim Year-End Report"
+                - "Annual and Sustainability Report"
 
-                You may refer to other forward-looking content in the report if necessary to complete the summary, but the **primary source must be the extracted forward-looking statements** from Part 1.
+                Detection tips:
+                - Check report title, headers, metadata, or introduction.
+                - If you can’t confidently detect the type, use "Annual Report" by default.
 
-                The summary should be clear, factual, and objective — as it will later be compared against sector-wide sentiment across all companies.
+                Examples:
+                - Title: "Annual and Sustainability Report 2024", then `"reportType": "Annual and Sustainability Report"`
+                - Title: "Year-End Report and Fourth Quarter 2024", then `"reportType": "Year-End Report and Q4 Report"`
+
+                The summary should be clear, factual, and objective — it will later be compared against sector-wide sentiment to identify standout performance.
+
 
 

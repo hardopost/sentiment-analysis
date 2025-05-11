@@ -1,7 +1,7 @@
 package com.hardo.sentimentanalysis.importing;
 
-import com.hardo.sentimentanalysis.processing.Report;
-import com.hardo.sentimentanalysis.processing.ReportRepository;
+import com.hardo.sentimentanalysis.domain.Report;
+import com.hardo.sentimentanalysis.domain.ReportRepository;
 import org.springframework.stereotype.Service;
 import org.apache.commons.csv.*;
 
