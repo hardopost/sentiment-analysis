@@ -24,4 +24,11 @@ public interface StatementRepository extends JpaRepository<Statement, UUID> {
             """, nativeQuery = true)
     List<SentimentDataDTO> getSentimentsCounts(@Param("type") String type);
 
+    @Query("""
+    SELECT s FROM Statement s
+    WHERE s.type = :type AND s.sector = :sector AND s.period = :period
+    ORDER BY s.category, s.sentiment
+""")
+    List<Statement> findByTypeAndSectorOrderByCategory(@Param("type") Statement.Type type, @Param("sector") String sector, @Param("period") String period);
+
 }

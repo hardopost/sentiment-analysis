@@ -1,4 +1,4 @@
-package com.hardo.sentimentanalysis.search;
+package com.hardo.sentimentanalysis.googlesearch;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,13 +23,6 @@ public class GoogleSearchTool {
     @PostConstruct
     public void init() {
         System.out.println("✅ ReportSearchTool loaded as a Spring Tool bean!");
-    }
-
-    @Tool(description = "Search for company annual reports using Google. Returns a structured list of results.")
-    public Map<String, Object> searchCompanyAnnualReports(String query) { // Return type is Map
-        System.out.println("Tool: Searching for: " + query);
-        String rawJsonResponse = searchService.fetchRawSearchResults(query);
-        return parseResultsToMap(rawJsonResponse);
     }
 
     @Tool(description = "Search anything you need from web using Google search. Returns a structured list of results.")

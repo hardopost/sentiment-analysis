@@ -86,20 +86,27 @@ async function sendMessage() {
    // Insert user message at the beginning of array
   messages.value.unshift({ from: 'user', text: messageToSend })
 
+  // ✅ Start time
+  const start = performance.now()
+
   try {
     const response = await api.post('/api/chat', {
       message: messageToSend
     })
 
+    // ✅ End time
+    const end = performance.now()
+    const elapsed = (end - start).toFixed(0)
+
     // Insert AI response below user message (i.e., above it in array)
-    messages.value.unshift({ from: 'ai', text: response.data })
+    messages.value.unshift({ from: 'ai', text: `${response.data}\n\n_⏱️ Responded in ${elapsed} ms_` })
   } catch (err) {
     messages.value.unshift({ from: 'ai', text: 'Error: failed to get response from server.' })
   }
 }
 
 function renderMarkdown(markdown: string): string {
-  return DOMPurify.sanitize(marked(markdown))
+  return DOMPurify.sanitize(marked.parse(markdown) as string) 
 }
 
 function autoResize(event: Event) {

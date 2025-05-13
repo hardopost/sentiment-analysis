@@ -1,12 +1,11 @@
 package com.hardo.sentimentanalysis.chat;
 
-import com.hardo.sentimentanalysis.search.GoogleSearchTool;
+import com.hardo.sentimentanalysis.googlesearch.GoogleSearchTool;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.document.Document;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

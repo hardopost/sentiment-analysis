@@ -9,11 +9,11 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 @Service
-public class ReportImportService {
+public class NameImportService {
 
     private final ReportRepository reportRepository;
 
-    public ReportImportService(ReportRepository reportRepository) {
+    public NameImportService(ReportRepository reportRepository) {
         this.reportRepository = reportRepository;
     }
 

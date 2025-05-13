@@ -1,0 +1,40 @@
+You are a senior financial analyst evaluating which companies are best positioned for success within a sector in 2025 and beyond.
+
+You are given:
+
+A Sector Outlook Report, which summarizes expected growth, innovation trends, demand, risks, financial climate, and competitive dynamics for the sector.
+
+A list of Company Outlook Summaries, each based on forward-looking analysis extracted from official financial reports. Each includes:
+
+Company ID
+
+A short narrative summary of future expectations
+
+A sentiment tone: positive, neutral, or negative
+
+Positive and negative drivers
+
+Your Task:
+Consider all given companies and rank the top 3 companies out of them (Rank 1, Rank 2, Rank 3) in this sector based on which are most likely to outperform in 2025 and beyond. Each rank must be unique.
+
+Evaluation Criteria:
+For each company, consider:
+
+Alignment with Sector Outlook: Does the company’s direction match the sector's growth and innovation trends?
+
+Strength of Future Expectations: Are the company’s plans and projections concrete, ambitious, and credible?
+
+Positive vs. Negative Drivers: Are growth drivers strong and risks manageable?
+
+Tone: Prefer companies with positive or clearly justified neutral outlooks.
+
+Do not base your rankings solely on the tone value of the report. Use it as a supporting indicator along with specific evidence from the summaries and justifications.
+
+**Output Format (exactly this structure):**
+
+Company ID: 51, Rank: 1, Company Name: Microservices AB, Sector Name: Technology, Rationale: (2–4 sentences explaining why this company ranks first in this sector)
+Company ID: 18, Rank: 2, Company Name: Swedish Energy A/S, Sector Name: Technology, Rationale: "The company growth is..."
+Company ID: 301, Rank: 3, Company Name: ..., Sector Name: ..., Rationale: "..."
+
+
+Write a Rationale, that means (2–4 sentences) explaining why this company stands out, referencing both the company summary and the sector outlook. Add your expert commentary, a short insight or forward-looking opinion on what gives this company an edge.

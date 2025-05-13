@@ -1,4 +1,4 @@
-package com.hardo.sentimentanalysis.search;
+package com.hardo.sentimentanalysis.scraper;
 
 import java.util.List;
 
@@ -7,18 +7,18 @@ import com.hardo.sentimentanalysis.domain.ReportRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ReportLinkFinderService {
+public class ReportLinkScraperService {
 
     private final ReportRepository reportRepository;
     private final AnnualReportScraper scraper;
-    private final MfnReportFinder mfnReportFinder;
+    private final MfnReportScraper mfnReportScraper;
 
-    public ReportLinkFinderService(ReportRepository reportRepository,
-                                   AnnualReportScraper scraper,
-                                   MfnReportFinder mfnReportFinder) {
+    public ReportLinkScraperService(ReportRepository reportRepository,
+                                    AnnualReportScraper scraper,
+                                    MfnReportScraper mfnReportScraper) {
         this.reportRepository = reportRepository;
         this.scraper = scraper;
-        this.mfnReportFinder = mfnReportFinder;
+        this.mfnReportScraper = mfnReportScraper;
     }
 
     public void resolveMissingReportLinks(String year) {
@@ -33,7 +33,7 @@ public class ReportLinkFinderService {
 
             // 1. Search from MFN
             if (pdfLink == null) {
-                pdfLink = mfnReportFinder.fetchAnnualReportPdf(year, report.getCompanyName());
+                pdfLink = mfnReportScraper.fetchAnnualReportPdf(year, report.getCompanyName());
                 if (pdfLink != null) source = "MFN.se";
             }
 

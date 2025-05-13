@@ -2,7 +2,7 @@ package com.hardo.sentimentanalysis.processing;
 
 import java.util.List;
 
-public record OutlookSummaryDTO(
+public record CompanySummaryDTO(
         String reportType, // Annual, Year-end and Q4, Annual and Sustainability, etc.
         String summary,
         String tone,           // "positive", "neutral", or "negative"

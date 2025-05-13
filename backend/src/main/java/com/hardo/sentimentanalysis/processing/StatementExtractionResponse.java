@@ -4,5 +4,5 @@ import java.util.List;
 
 public record StatementExtractionResponse(
         List<StatementDTO> statements,
-        OutlookSummaryDTO summary
+        CompanySummaryDTO summary
 ) {}

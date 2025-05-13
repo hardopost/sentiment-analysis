@@ -1,21 +1,12 @@
 package com.hardo.sentimentanalysis;
 
-import com.hardo.sentimentanalysis.extraction.ReportDownloadService;
-import com.hardo.sentimentanalysis.importing.ReportImportService;
-import com.hardo.sentimentanalysis.processing.StatementProcessingService;
-import com.hardo.sentimentanalysis.search.AnnualReportScraper;
-import com.hardo.sentimentanalysis.search.MfnReportFinder;
-import com.hardo.sentimentanalysis.search.ReportLinkDiscoveryService;
-import com.hardo.sentimentanalysis.search.ReportLinkFinderService;
+import com.hardo.sentimentanalysis.processing.CompanyRankingService;
+import com.hardo.sentimentanalysis.processing.SectorRankingService;
+import com.hardo.sentimentanalysis.processing.SectorSummaryService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-
-import java.io.File;
-import java.nio.file.Path;
 
 @SpringBootApplication
 public class Application {
@@ -41,7 +32,7 @@ public class Application {
 
 
 	/*@Bean
-	CommandLineRunner loadReportsFromCsv(ReportImportService reportImportService, ResourceLoader resourceLoader) {
+	CommandLineRunner loadReportsFromCsv(NameImportService reportImportService, ResourceLoader resourceLoader) {
 		return args -> {
 			Resource resource = resourceLoader.getResource("classpath:data/omx_stockholm_companies.csv");
 			File csvFile = resource.getFile();
@@ -66,7 +57,7 @@ public class Application {
 					System.out.printf("Processing: %s (%d/%d)%n", reportName, i + 1, pdfFiles.length);
 
 
-					service.processPdf(pdfFile);
+					service.processAnnualReportPdf(pdfFile);
 
 					// Add a delay between requests if needed
 					// Thread.sleep(500); // 0.5 second pause (adjust if necessary)
@@ -75,5 +66,30 @@ public class Application {
 			}
 		};
 	}*/
+
+
+	//For creating sector summaries
+	/*@Bean
+	CommandLineRunner runSectorSummaryService(SectorSummaryService service) {
+		return args -> {
+			service.generateSectorSummary("2024");
+		};
+	}*/
+
+	//For creating sector rankings
+	/*@Bean
+	CommandLineRunner runSectorRankingService(SectorRankingService service) {
+		return args -> {
+			service.rankSectors("2024");
+		};
+	}*/
+
+	//For creating company rankings in sectors
+	@Bean
+	CommandLineRunner runCompanyRankingService(CompanyRankingService service) {
+		return args -> {
+			service.rankCompaniesInSectors("2024");
+		};
+	}
 
 }

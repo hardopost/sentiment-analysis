@@ -1,4 +1,4 @@
-package com.hardo.sentimentanalysis.search;
+package com.hardo.sentimentanalysis.scraper;
 
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.stereotype.Component;

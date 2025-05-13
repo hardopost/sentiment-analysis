@@ -81,7 +81,7 @@ public class StatementProcessingService {
         return text.length() / 4;
     }
 
-    public void processPdf(File pdfFile) throws IOException {
+    public void processAnnualReportPdf(File pdfFile) throws IOException {
 
         String reportName = pdfFile.getName();
         Long reportId = extractReportIdFromFileName(reportName);
@@ -128,7 +128,7 @@ public class StatementProcessingService {
                 .toList();
 
         List<String> enrichedStatements = statementEntities.stream()
-                .map(EmbeddingInputBuilder::buildEmbeddingInputForStatement)  // statement -> EmbeddingInputBuilder.buildEmbeddingInput(statement)
+                .map(StringInputBuilder::buildStringInputForStatementEmbedding)  // statement -> EmbeddingInputBuilder.buildEmbeddingInput(statement)
                 .toList();                                        // "[Company: Alfa Laval] [Category: Revenue Growth Expectations] ... We expect revenue to grow by 10% next year."
 
         for (String enrichedStatement : enrichedStatements) {
@@ -182,7 +182,7 @@ public class StatementProcessingService {
         System.out.println("Embedding time: " + embeddingProcessingTimeMs);
 
         // Create embedding string for a company summary
-        String input = EmbeddingInputBuilder.buildEmbeddingInputForReport(report, llmResult.output().summary());
+        String input = StringInputBuilder.buildStringInputForReportEmbedding(report, llmResult.output().summary());
         System.out.println("Input for embedding: " + input);
         EmbeddingResponse embeddingResponse = embeddingModel.embedForResponse(List.of(input));
         Embedding embedding = embeddingResponse.getResults().getFirst();

@@ -1,12 +1,13 @@
 // Report.java
 package com.hardo.sentimentanalysis.domain;
 
-import com.hardo.sentimentanalysis.processing.OutlookSummaryDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 
@@ -58,8 +59,9 @@ public class Report {
     @Column(name = "statement_total_tokens")
     private Integer totalTokens;
 
-    @Column(name = "outlook_summary", columnDefinition = "jsonb")
-    private String outlookSummary;
+    @Column(columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private String metadata;
 
     @Column(name = "llm_time_ms")
     private Long llmTimeMs;
@@ -69,4 +71,19 @@ public class Report {
 
     @Column(name = "embedding_total_tokens")
     private Integer embeddingTotalTokens;
+
+    @Column(name = "rank")
+    private Integer rank;
+
+    @Column(name = "rank_rationale", columnDefinition = "text")
+    private String rationale;
+
+    @Column(name = "ranking_prompt_tokens")
+    private Integer rankingPromptTokens;
+
+    @Column(name = "ranking_completion_tokens")
+    private Integer rankingCompletionTokens;
+
+    @Column(name = "ranking_total_tokens")
+    private Integer rankingTotalTokens;
 }

@@ -10,5 +10,4 @@ public record StatementDTO(
         String content,
         String sentiment,
         String period
-
 ) {}

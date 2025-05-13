@@ -1,13 +1,10 @@
-package com.hardo.sentimentanalysis.search;
+package com.hardo.sentimentanalysis.scraper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class AnnualReportScraper {

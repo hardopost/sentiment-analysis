@@ -1,28 +1,19 @@
-package com.hardo.sentimentanalysis.search;
+package com.hardo.sentimentanalysis.scraper;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.springframework.stereotype.Service;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
-public class MfnReportFinder {
+public class MfnReportScraper {
 
     private static final String MFN_BASE_URL = "https://mfn.se/all/s/nordic?limit=240&filter=(and(or(.properties.tags%40%3E%5B%22sub%3Areport%22%5D))(or(.properties.lang%3D%22en%22))(or(a.market_segment_ids%40%3E%5B13%5D)(a.market_segment_ids%40%3E%5B14%5D)(a.market_segment_ids%40%3E%5B15%5D)))&query";
     private final WebDriver driver;
 
-    public MfnReportFinder(WebDriver driver) {
+    public MfnReportScraper(WebDriver driver) {
         this.driver = driver;
     }
 

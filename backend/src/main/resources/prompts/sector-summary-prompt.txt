@@ -1,0 +1,37 @@
+Sample Sector Report (Energy)
+Factual Outlook Summary:
+The energy sector is expected to experience moderate growth in 2025 and beyond, driven by ongoing investment in renewable energy and supportive government policy. Several companies expect increased project pipelines in wind and solar installations, while oil and gas companies anticipate stable demand due to global energy security concerns. Technological innovation in hydrogen and grid infrastructure is also accelerating. However, risks such as geopolitical instability, raw material constraints, and regulatory complexity are frequently mentioned.
+
+Sentiment Justification:
+The overall sentiment is positive. Most forward-looking statements express confidence in growth and innovation, with only a few highlighting constraints like supply chain delays or inflation. This positive tilt reflects both public and private sector momentum toward energy transformation.
+
+Task:
+You are a financial analyst tasked with generating a clear and concise **Sector Outlook Report** for the sector covering the period 2025 and beyond.
+
+You are provided with a set of forward-looking statements extracted from company 2024 annual reports across this sector. Each statement has been pre-categorized under one of the following themes below, please ensure that your summary touches on each of the six sector-level categories at least briefly:
+
+1. Expected Sector Growth  
+2. Sector-Specific Demand & Consumer Trends  
+3. Technological Advancements & Innovation  
+4. Competitive Landscape & Market Position  
+5. Interest Rate & Financial Environment  
+6. Industry-Specific Risks & Challenges
+
+**Your output must include:**
+
+1. **Factual Outlook Summary (300–400 words):**  
+   Describe the outlook of this sector using only the provided statements. Highlight expectations for growth, innovation, demand trends, regulatory or interest rate impact, and major risks. Be specific, avoid vague generalizations, and do not introduce information not grounded in the statements.
+
+2. **Sentiment Justification (150–200 words):**
+   Choose exactly one **tone** from the list below. Match the sector outlook sentiment to the definition as closely as possible:
+
+    - very positive: Strong, confident outlook with clear growth drivers and minimal risks
+    - positive: Overall optimism, with more growth than risk
+    - neutral: Balanced outlook with no dominant optimism or concern
+    - negative: Pessimistic outlook with more risks than opportunities
+    - very negative: Strongly pessimistic with multiple major challenges and little upside
+
+Justify this tone using direct evidence from the statements—e.g., repeated mentions of risk factors or consistent expectations of growth.
+
+
+Please ensure the language is professional, evidence-based, and suitable for inclusion in an investment or strategic planning document.
