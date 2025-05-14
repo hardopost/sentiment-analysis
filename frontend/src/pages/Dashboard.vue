@@ -1,20 +1,21 @@
 <template>
-  <div class="max-w-screen-xl mx-auto px-4">
-    <h1 class="text-2xl font-bold mb-4 text-center">Aggregated Overview</h1>
+  <div class="max-w-screen-xl mx-auto px-4 py-6">
+    <h1 class="text-2xl font-bold mb-6 text-center">Aggregated Overview</h1>
 
     <div v-if="loading">Loading data...</div>
     <div v-else-if="error">Error loading data: {{ error }}</div>
 
-    <div v-else-if="sentiments">
-      <div class="columns-1 md:columns-2 gap-6">
-        <div class="break-inside-avoid p-4 border border-gray-100 rounded-xl shadow-md hover:shadow-xl transition-shadow">
-          <h2 class="text-xl font-semibold mb-2 text-center" >Company Sentiment</h2>
-          <CompanyCategoryChart :data="sentiments.companies" />
-        </div>
-        <div class="break-inside-avoid p-4 border border-gray-100 rounded-xl shadow-md">
-          <h2 class="text-xl font-semibold mb-2 text-center">Sector Sentiment</h2>
-          <SectorCategoryChart :data="sentiments.sectors" />
-        </div>
+    <div v-else-if="sentiments" class="space-y-10 flex flex-col items-center">
+      <!-- Company Sentiment -->
+      <div class="w-full max-w-[850px] border border-gray-100 rounded-xl shadow-md p-4">
+        <h2 class="text-xl font-semibold mb-2 text-center">Company Statements Count</h2>
+        <CompanyCategoryChart :data="sentiments.companies" />
+      </div>
+
+      <!-- Sector Sentiment -->
+      <div class="w-full max-w-[850px] border border-gray-100 rounded-xl shadow-md p-4">
+        <h2 class="text-xl font-semibold mb-2 text-center">Sector Statements Count</h2>
+        <SectorCategoryChart :data="sentiments.sectors" />
       </div>
     </div>
   </div>

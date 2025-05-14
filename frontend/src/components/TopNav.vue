@@ -1,5 +1,5 @@
 <template>
-    <nav class="bg-white border-b border-gray-400 py-4">
+    <nav class="bg-white border-b border-gray-400 py-4 sticky top-0 z-50 shadow-sm">
       <div class="max-w-screen-xl mx-auto px-4 flex items-center justify-between">
         <div class="text-2xl font-bold text-gray-800">
           Sentiment Analysis

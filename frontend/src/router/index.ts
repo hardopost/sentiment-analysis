@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'; // imports functions to use
 import type { RouteRecordRaw } from 'vue-router'; // import types to use
 import Dashboard from '../pages/Dashboard.vue';
-//import CompanySummaries from '../pages/CompanySummaries.vue';
-//import SectorSummaries from '../pages/SectorSummaries.vue';
+import CompanySummaries from '../pages/CompanySummaries.vue';
+import SectorSummaries from '../pages/SectorSummaries.vue';
 
 // Type the routes
 const routes: Array<RouteRecordRaw> = [ //RouteRecordRaw is a predefined interface from vue-router package, It tells TypeScript, every object in this array must have fields like path, component, maybe children, etc.
   { path: '/', component: Dashboard },
-  //{ path: '/companies', component: CompanySummaries },
-  //{ path: '/sectors', component: SectorSummaries },
+  { path: '/companies', component: CompanySummaries },
+  { path: '/sectors', component: SectorSummaries },
 ];
 
 // Create the router
