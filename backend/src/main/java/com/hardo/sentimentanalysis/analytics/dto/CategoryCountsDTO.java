@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class AggregateCategoryCountsDTO {
+public class CategoryCountsDTO {
 
     private String category;
     private long negativeCount;

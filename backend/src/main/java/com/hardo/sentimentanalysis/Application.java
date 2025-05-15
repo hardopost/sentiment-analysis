@@ -3,10 +3,14 @@ package com.hardo.sentimentanalysis;
 import com.hardo.sentimentanalysis.processing.CompanyRankingService;
 import com.hardo.sentimentanalysis.processing.SectorRankingService;
 import com.hardo.sentimentanalysis.processing.SectorSummaryService;
+import com.hardo.sentimentanalysis.processing.StatementValidationService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import java.io.File;
+import java.nio.file.Path;
 
 @SpringBootApplication
 public class Application {
@@ -67,6 +71,29 @@ public class Application {
 		};
 	}*/
 
+	/*@Bean
+	CommandLineRunner run(StatementValidationService service) {
+		return args -> {
+			Path reportsDir = Path.of("reports"); // This matches where your files are saved
+			File[] pdfFiles = reportsDir.toFile().listFiles((dir, name) -> name.toLowerCase().endsWith(".pdf"));
+
+			if (pdfFiles != null) {
+				for (int i = 0; i < pdfFiles.length; i++) {
+					File pdfFile = pdfFiles[i];
+					String reportName = pdfFile.getName();
+					System.out.printf("Processing: %s (%d/%d)%n", reportName, i + 1, pdfFiles.length);
+
+
+					service.validateStatements(pdfFile);
+
+					// Add a delay between requests if needed
+					// Thread.sleep(500); // 0.5 second pause (adjust if necessary)
+
+				}
+			}
+		};
+	}*/
+
 
 	//For creating sector summaries
 	/*@Bean
@@ -85,11 +112,11 @@ public class Application {
 	}*/
 
 	//For creating company rankings in sectors
-	@Bean
+	/*@Bean
 	CommandLineRunner runCompanyRankingService(CompanyRankingService service) {
 		return args -> {
 			service.rankCompaniesInSectors("2024");
 		};
-	}
+	}*/
 
 }

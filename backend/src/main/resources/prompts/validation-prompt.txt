@@ -20,6 +20,7 @@ Use the following definitions to assess whether the assigned type is valid:
 
 - Company-level (type: company):  
   The statement describes how the company expects its own future to evolve. This includes forecasts, strategies, risks, or plans related to revenue, profitability, operations, product innovation, market position, or financial stability.
+  If company describes it own market, but does not directly relate to its own operations, it should be classified as sector.
 
 - Sector-level (type: sector):  
   The statement describes expected developments for the broader industry or sector. These may relate to consumer trends, economic conditions, competition, technological changes, or regulatory risks.
@@ -81,17 +82,19 @@ FOR EACH STATEMENT, EVALUATE THE FOLLOWING:
 
 ---
 
-OUTPUT FORMAT
+OUTPUT EXAMPLE FORMAT:
 
-  "givenStatement": "<The extracted forward-looking statement>",
-  "foundStatement": "<The matching statement from the report, if any>",
-  "matchFound": true,
-  "isTypeValid": true,
-  "isCategoryValid": true,
-  "isSentimentValid": true,
-  "isSectorValid": true,
-  "comment": "Found in the CEO letter. The classification, sentiment, and sector are all appropriate based on the original text."
+  givenStatement: "The extracted forward-looking statement"
+  foundStatement: "The matching statement from the report, if any"
+  matchFound: true,
+  isTypeValid: false,
+  isCategoryValid: true,
+  isSentimentValid: false,
+  isSectorValid: true,
+  comment: "Found in the CEO letter. The classification, sentiment, and sector are all appropriate based on the original text."
 
 If no matching statement is found, set "matchFound": false and leave "foundStatement" empty or null.
 
 Be precise and objective — your evaluation will help assess the quality of the extraction process.
+
+Don't return these characters '`' (code 96) in your output.

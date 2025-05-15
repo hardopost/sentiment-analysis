@@ -9,13 +9,11 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class SectorSummaryAndChartDTO {
+public class SectorSummariesDTO {
     String sector; // "Technology"
     String summary;
     String tone;
     String toneRationale;
-    String ranking;
+    Integer ranking;
     String rankingRationale;
-    List<String> categoriesCounts;
-
 }

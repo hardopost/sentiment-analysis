@@ -98,4 +98,23 @@ public class StringInputBuilder {
         """,companyId, companyName, sectorName, companyType, originalJson.substring(1)); // Removes opening '{' from original JSON
     }
 
+    public static String buildStringInputValidationStatement(Statement statement) {
+        return String.format(
+                """
+                   Company: %s,
+                   Type: %s,
+                   Sector: %s,
+                   Category: %s,
+                   Sentiment: %s,
+                   Statement: %s
+                """,
+                statement.getCompanyName(),
+                statement.getType(),
+                statement.getSector(),
+                statement.getCategory(),
+                statement.getSentiment(),
+                statement.getContent()
+        );
+    }
+
 }
