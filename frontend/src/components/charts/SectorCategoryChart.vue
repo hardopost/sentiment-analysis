@@ -47,9 +47,12 @@
     return {
       tooltip: { trigger: 'axis' },
       legend: { data: ['Negative', 'Neutral', 'Positive'] },
-      grid: { left: '5%', right: '4%', bottom: '3%', containLabel: true },
-      xAxis: { type: 'value' },
-      yAxis: { type: 'category', data: categories },
+      grid: { left: '5%', right: '7%', bottom: '3%', containLabel: true },
+      xAxis: { type: 'value', axisLabel: {fontSize: 14 }},
+      yAxis: { type: 'category', data: categories, axisLabel: {
+    fontSize: 14, // ← Increase this to make category labels bigger
+    color: '#333'
+  } },
       series: [
         {
           name: 'Negative',
@@ -70,7 +73,19 @@
           type: 'bar',
           color: 'rgb(70,147,73)',
           stack: 'total',
-          data: props.data.map(d => d.positiveCount)
+          data: props.data.map(d => d.positiveCount),
+          label: {
+            show: true,
+            position: 'right',
+            formatter: (params: any) => {
+              const total = props.data[params.dataIndex].positiveCount +
+                    props.data[params.dataIndex].neutralCount +
+                    props.data[params.dataIndex].negativeCount;
+              return total.toString()
+            },
+          fontSize: 14,
+          color: '#000'
+          }
         }
       ]
     }
