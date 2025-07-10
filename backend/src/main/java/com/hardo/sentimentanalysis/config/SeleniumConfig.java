@@ -1,4 +1,4 @@
-package com.hardo.sentimentanalysis.config;
+/*package com.hardo.sentimentanalysis.config;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -23,5 +23,5 @@ public class SeleniumConfig {
         // Return the configured WebDriver instance
         return new ChromeDriver(options);
     }
-}
+}*/
 

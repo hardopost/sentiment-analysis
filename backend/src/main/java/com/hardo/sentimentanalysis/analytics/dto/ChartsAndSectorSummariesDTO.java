@@ -20,7 +20,7 @@ public class ChartsAndSectorSummariesDTO {
     // Delegate methods to base
     public String getSector() { return base.getSector(); }
     public String getSummary() { return base.getSummary(); }
-    public String getTone() { return base.getTone(); }
+    public String getSentiment() { return base.getSentiment(); }
     public String getToneRationale() { return base.getToneRationale(); }
     public Integer getRanking() { return base.getRanking(); }
     public String getRankingRationale() { return base.getRankingRationale(); }

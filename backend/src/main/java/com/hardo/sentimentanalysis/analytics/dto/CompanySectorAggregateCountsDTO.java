@@ -4,16 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.catalina.LifecycleState;
 
 import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class CompanySectorAggregateCountsDTO {
-    private List<CategoryCountsDTO> companies;
-    private List<CategoryCountsDTO> sectors;
+    private Map<String, List<CategoryCountsDTO>> companies;
+    private Map<String, List<CategoryCountsDTO>> sectors;
 
 }

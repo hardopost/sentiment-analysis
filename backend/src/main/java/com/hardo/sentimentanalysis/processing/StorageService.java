@@ -41,16 +41,17 @@ public class StorageService {
 
                     jdbcClient.sql("""
                         INSERT INTO statement (
-                            id, type, company_name, sector, category,
+                            id, market, type, company_name, sector, category,
                             content, sentiment, period, capitalization,
                             embedding, metadata, report_id
                         ) VALUES (
-                            :id, :type, :companyName, :sector, :category,
+                            :id, :market, :type, :companyName, :sector, :category,
                             :content, :sentiment, :period, :capitalization,
                             :embedding::vector, :metadata::jsonb, :reportId
                         )
                         """)
                             .param("id", statement.getId())
+                            .param("market", statement.getMarket())
                             .param("type", statement.getType().toString())
                             .param("companyName", statement.getCompanyName())
                             .param("sector", statement.getSector())
@@ -69,6 +70,7 @@ public class StorageService {
     private String buildMetadataJson(Statement statement) {
         try {
             Map<String, Object> metadata = Map.of(
+                    "market", statement.getMarket(),
                     "companyName", statement.getCompanyName(),
                     "period", statement.getPeriod(),
                     "type", statement.getType().toString(),
@@ -83,28 +85,53 @@ public class StorageService {
         }
     }
 
+    private String buildMetadataJsonForReport(Report report, CompanySummaryDTO summaryDTO) {
+        try {
+            Map<String, Object> metadata = Map.of(
+                    "market", report.getMarket(),
+                    "companyName", report.getCompanyName(),
+                    "period", report.getPeriod(),
+                    "sector", report.getSector(),
+                    "summary", summaryDTO.summary(),
+                    "tone", summaryDTO.tone(),
+                    "positiveDrivers", summaryDTO.positiveDrivers(),
+                    "negativeDrivers", summaryDTO.negativeDrivers(),
+                    "capitalization", report.getCapitalization()
+            );
+            return objectMapper.writeValueAsString(metadata);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize metadata for report: " + report.getId(), e);
+        }
+    }
+
     @Transactional
     public void updateReportAfterProcessing(Report report, LlmResult<StatementExtractionResponse> llmResult, String embeddingString, long statementProcessingTime, long embeddingProcessingTime, int embeddingTotalTokens) {
         try {
-            String outlookSummaryJson = objectMapper.writeValueAsString(llmResult.output().summary());
+            String metadataJson = buildMetadataJsonForReport(report, llmResult.output().summary());
 
             jdbcClient.sql("""
             UPDATE report SET
                 report_type = :reportType,
-                metadata = :outlookSummary::jsonb,
-                embedding = :outlookEmbedding::vector,
+                report_title_full = :reportTitleFull,
+                report_fiscal_year = :reportFiscalYear,
+                metadata = :metadata::jsonb,
+                embedding = :embedding::vector,
                 statement_prompt_tokens = :statementPromptTokens,
                 statement_completion_tokens = :statementCompletionTokens,
                 statement_total_tokens = :statementTotalTokens,
                 llm_time_ms = :llmTimeMs,
                 embedding_time_ms = :embeddingTimeMs,
                 processed = true,
-                embedding_total_tokens = :embeddingTotalTokens
+                embedding_total_tokens = :embeddingTotalTokens,
+                content = :content
+                  
             WHERE id = :reportId
         """)
                     .param("reportType", llmResult.output().summary().reportType())
-                    .param("outlookSummary", outlookSummaryJson)
-                    .param("outlookEmbedding", embeddingString)
+                    .param("reportTitleFull", llmResult.output().summary().reportTitleFull())
+                    .param("reportFiscalYear", llmResult.output().summary().reportFiscalYear())
+                    .param("metadata", metadataJson)
+                    .param("embedding", embeddingString)
                     .param("statementPromptTokens", llmResult.promptTokens())
                     .param("statementCompletionTokens", llmResult.completionTokens())
                     .param("statementTotalTokens", llmResult.totalTokens())
@@ -112,6 +139,7 @@ public class StorageService {
                     .param("embeddingTimeMs", embeddingProcessingTime)
                     .param("reportId", report.getId())
                     .param("embeddingTotalTokens", embeddingTotalTokens)
+                    .param("content", llmResult.output().summary().toString())
                     .update();
         } catch (Exception e) {
             throw new RuntimeException("Failed to update report after processing", e);

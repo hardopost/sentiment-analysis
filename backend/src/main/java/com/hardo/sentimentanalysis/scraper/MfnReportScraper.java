@@ -1,4 +1,4 @@
-package com.hardo.sentimentanalysis.scraper;
+/*package com.hardo.sentimentanalysis.scraper;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -81,4 +81,4 @@ public class MfnReportScraper {
                 .replaceAll("\\s+", " ")            // normalize whitespace
                 .trim();
     }
-}
+}*/

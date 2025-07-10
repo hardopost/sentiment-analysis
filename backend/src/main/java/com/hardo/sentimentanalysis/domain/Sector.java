@@ -29,8 +29,8 @@ public class Sector {
     @Column(name = "sentiment_justification", columnDefinition = "TEXT")
     private String sentimentJustification;
 
-    @Column(name = "tone")
-    private String tone; // Expected: "positive", "neutral", or "negative"
+    @Column(name = "sentiment")
+    private String sentiment; // Expected: "positive", "neutral", or "negative"
 
     @Column(name = "period")
     private String period; // e.g., 2024
@@ -52,5 +52,8 @@ public class Sector {
 
     @Column(name = "created_at", updatable = false, insertable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "market")
+    private String market; // e.g., stockholm, baltic
 
 }

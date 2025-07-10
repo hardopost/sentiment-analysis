@@ -1,4 +1,4 @@
-package com.hardo.sentimentanalysis.processing;
+package com.hardo.sentimentanalysis.domain;
 
 
 import jakarta.persistence.*;
@@ -49,13 +49,8 @@ public class StatementValidation {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "prompt_tokens")
-    private Integer promptTokens;
+    @Column(name = "esg", nullable = false)
+    private String esg; // "no", "yes-financial", or "yes-nonfinancial"
 
-    @Column(name = "completion_tokens")
-    private Integer completionTokens;
-
-    @Column(name = "total_tokens")
-    private Integer totalTokens;
 
 }

@@ -1,16 +1,13 @@
 package com.hardo.sentimentanalysis.processing;
 
-import com.hardo.sentimentanalysis.domain.Report;
-import com.hardo.sentimentanalysis.domain.SectorRepository;
-import com.hardo.sentimentanalysis.domain.Statement;
-import com.hardo.sentimentanalysis.domain.StatementRepository;
+import com.hardo.sentimentanalysis.domain.*;
 import com.hardo.sentimentanalysis.extraction.PDFExtractorService;
 import org.slf4j.Logger;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class StatementValidationService {
@@ -30,15 +26,17 @@ public class StatementValidationService {
     private final StatementRepository statementRepository;
     private final StatementValidationRepository statementValidationRepository;
     private final ChatClient chatClient;
+    private final ReportRepository reportRepository;
     @Value("classpath:prompts/validation-prompt.txt")
     private Resource validationPrompt;
 
 
-    public StatementValidationService(StatementRepository statementRepository, PDFExtractorService pdfExtractorService, StatementValidationRepository statementValidationRepository, ChatClient.Builder builder) {
+    public StatementValidationService(StatementRepository statementRepository, PDFExtractorService pdfExtractorService, StatementValidationRepository statementValidationRepository, @Qualifier("geminiChatClient") ChatClient chatClient, ReportRepository reportRepository) {
         this.pdfExtractorService = pdfExtractorService;
         this.statementRepository = statementRepository;
         this.statementValidationRepository = statementValidationRepository;
-        this.chatClient = builder.defaultOptions(ChatOptions.builder().temperature(0.0d).build()).build();
+        this.chatClient = chatClient;
+        this.reportRepository = reportRepository;
     }
 
     private Long extractReportIdFromFileName(String filename) {
@@ -49,10 +47,12 @@ public class StatementValidationService {
         }
     }
 
+    // 10 random report id-s: 1 5 103 122 156 162 206 244 322 365
     public void validateStatements(File pdfFile) throws IOException {
 
         String reportName = pdfFile.getName();
         Long reportId = extractReportIdFromFileName(reportName);
+        Report report = reportRepository.findReportById(reportId);
 
         List<Statement> statements = statementRepository.findByReportId(reportId); // Fetch statements for the report
 
@@ -110,14 +110,15 @@ public class StatementValidationService {
                     validationResult.isSectorValid(),
                     validationResult.comment(),
                     null,
-                    llmResult.promptTokens(),
-                    llmResult.completionTokens(),
-                    llmResult.totalTokens()
+                    validationResult.esg()
             );
             statementValidationRepository.save(sv);
-
-
         }
+        report.setValidationPromptTokens(llmResult.promptTokens());
+        report.setValidationCompletionTokens(llmResult.completionTokens());
+        report.setValidationTotalTokens(llmResult.totalTokens());
+        reportRepository.save(report);
+
         System.out.println("Validation results saved to database.");
 
     }

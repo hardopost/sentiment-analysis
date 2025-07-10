@@ -1,6 +1,6 @@
 package com.hardo.sentimentanalysis.scraper;
 
-import java.util.List;
+/*import java.util.List;
 
 import com.hardo.sentimentanalysis.domain.Report;
 import com.hardo.sentimentanalysis.domain.ReportRepository;
@@ -46,7 +46,7 @@ public class ReportLinkScraperService {
 
 
             // 3. Save if link found
-            if (pdfLink != null) {
+  /*          if (pdfLink != null) {
                 report.setDownloadLink(pdfLink);
                 reportRepository.save(report);
                 System.out.printf("✅ [%s] Saved: %s → %s%n", source, report.getCompanyName(), pdfLink);
@@ -55,5 +55,5 @@ public class ReportLinkScraperService {
             }
         }
     }
-}
+}*/
 

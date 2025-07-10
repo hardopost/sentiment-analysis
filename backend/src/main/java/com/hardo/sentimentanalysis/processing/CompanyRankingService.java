@@ -7,6 +7,7 @@ import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
@@ -25,15 +26,15 @@ public class CompanyRankingService {
     @Value("classpath:prompts/company-ranking-prompt.txt")
     private Resource companyRankingPrompt;
 
-    public CompanyRankingService(SectorRepository sectorRepository, ReportRepository reportRepository, ChatClient.Builder builder) {
+    public CompanyRankingService(SectorRepository sectorRepository, ReportRepository reportRepository, @Qualifier("geminiChatClient") ChatClient chatClient) {
         this.sectorRepository = sectorRepository;
         this.reportRepository = reportRepository;
-        this.chatClient = builder.defaultOptions(ChatOptions.builder().temperature(0.2d).build()).build();
+        this.chatClient = chatClient;
     }
 
 
-    public void rankCompaniesInSectors(String period) {
-        List<Sector> sectors = sectorRepository.findSummariesByPeriod(period);
+    public void rankCompaniesInSectors(String period, String market) {
+        List<Sector> sectors = sectorRepository.findSummariesByPeriod(period, market);
 
         if (sectors.isEmpty()) {
             logger.info("No sectors found in the database.");
@@ -43,7 +44,7 @@ public class CompanyRankingService {
         }
 
         for (Sector sector : sectors) {
-            List<Report> reports = reportRepository.findReportsBySectorAndPeriod(sector.getSectorName(), period);
+            List<Report> reports = reportRepository.findReportsBySectorAndPeriod(sector.getSectorName(), period, market);
 
             // Create the user input string from the sectors
             StringBuilder sb = new StringBuilder();
@@ -92,9 +93,9 @@ public class CompanyRankingService {
         Report existingReport = report.get();
         existingReport.setRank(companyRanking.rank());
         existingReport.setRationale(companyRanking.rationale());
-        existingReport.setPromptTokens(existingReport.getPromptTokens() + llmResult.promptTokens());
-        existingReport.setCompletionTokens(existingReport.getCompletionTokens() + llmResult.completionTokens());
-        existingReport.setTotalTokens(existingReport.getTotalTokens() + llmResult.totalTokens());
+        existingReport.setRankingPromptTokens(llmResult.promptTokens());
+        existingReport.setRankingCompletionTokens(llmResult.completionTokens());
+        existingReport.setRankingTotalTokens(llmResult.totalTokens());
         return existingReport;
     }
 

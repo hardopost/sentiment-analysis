@@ -17,6 +17,7 @@ import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.embedding.Embedding;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.embedding.EmbeddingResponse;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
@@ -45,9 +46,9 @@ public class StatementProcessingService {
     private Resource extractPrompt;
 
 
-    public StatementProcessingService(PDFExtractorService pdfExtractorService, ChatClient.Builder builder, StatementRepository statementRepository, EmbeddingModel embeddingModel, ReportRepository reportRepository, StorageService storageService) {
+    public StatementProcessingService(PDFExtractorService pdfExtractorService, @Qualifier("geminiChatClient") ChatClient chatClient, StatementRepository statementRepository, EmbeddingModel embeddingModel, ReportRepository reportRepository, StorageService storageService) {
         this.pdfExtractorService = pdfExtractorService;
-        this.chatClient = builder.defaultOptions(ChatOptions.builder().temperature(0.0d).build()).build();
+        this.chatClient = chatClient;
         this.embeddingModel = embeddingModel;
         this.reportRepository = reportRepository;
         this.storageService = storageService;
@@ -128,7 +129,7 @@ public class StatementProcessingService {
                 .toList();
 
         List<String> enrichedStatements = statementEntities.stream()
-                .map(StringInputBuilder::buildStringInputForStatementEmbedding)  // statement -> EmbeddingInputBuilder.buildEmbeddingInput(statement)
+                .map(statement -> StringInputBuilder.buildStringInputForStatementEmbedding(statement, report))  // statement -> EmbeddingInputBuilder.buildEmbeddingInput(statement)
                 .toList();                                        // "[Company: Alfa Laval] [Category: Revenue Growth Expectations] ... We expect revenue to grow by 10% next year."
 
         for (String enrichedStatement : enrichedStatements) {

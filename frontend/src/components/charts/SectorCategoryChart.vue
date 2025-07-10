@@ -1,11 +1,11 @@
 <template>
   <div class="w-full h-[400px]">
-    <v-chart :option="chartOptions" autoresize class="w-full h-full" />
+    <v-chart ref="chartRef" :option="chartOptions" autoresize class="w-full h-full"/>
   </div>
 </template>
   
   <script setup lang="ts">
-  import { computed } from 'vue'
+  import { computed, ref, onMounted, nextTick } from 'vue'
   import { use } from 'echarts/core'
   import VChart from 'vue-echarts'
   import {
@@ -29,6 +29,15 @@
     GridComponent,
     LegendComponent
   ])
+
+  const customOrder = [
+  'Expected Sector Growth',
+  'Sector-Specific Demand & Consumer Trends',
+  'Technological Advancements & Innovation',
+  'Competitive Landscape & Market Position',
+  'Interest Rate & Financial Environment',
+  'Industry-Specific Risks & Challenges'
+]
   
   interface SentimentData {
     category: string;
@@ -40,9 +49,41 @@
   const props = defineProps<{
     data: SentimentData[];
   }>()
+
+  const sortedData = computed(() => {
+    return [...props.data].sort((a, b) =>
+      customOrder.indexOf(b.category) - customOrder.indexOf(a.category)
+    )
+  })
+
+  const chartRef = ref<InstanceType<typeof VChart> | null>(null)
+
+  const emit = defineEmits<{
+    (e: 'bar-click', payload: { category: string; sentiment: string }): void
+  }>()
+
+const handleClick = (params: any) => {
+  console.log('CLICKED BAR:', params)
+  emit('bar-click', {
+    category: params.name,
+    sentiment: params.seriesName.toLowerCase()
+  })
+}
+
+onMounted(() => {
+  nextTick(() => {
+    const chart = chartRef.value?.chart
+    if (chart) {
+      chart.on('click', handleClick)
+      console.log('✅ Chart click listener attached')
+    } else {
+      console.warn('⚠️ chartRef is not defined or chart instance not available')
+    }
+  })
+})
   
   const chartOptions = computed(() => {
-    const categories = props.data.map(d => d.category)
+    const categories = sortedData.value.map(d => d.category)
   
     return {
       tooltip: { trigger: 'axis' },
@@ -59,28 +100,28 @@
           type: 'bar',
           color: 'rgb(175,54,60)',
           stack: 'total',
-          data: props.data.map(d => d.negativeCount)
+          data: sortedData.value.map(d => d.negativeCount)
         },
         {
           name: 'Neutral',
           type: 'bar',
           color: 'rgb(192,192,192)',
           stack: 'total',
-          data: props.data.map(d => d.neutralCount)
+          data: sortedData.value.map(d => d.neutralCount)
         },
         {
           name: 'Positive',
           type: 'bar',
           color: 'rgb(70,147,73)',
           stack: 'total',
-          data: props.data.map(d => d.positiveCount),
+          data: sortedData.value.map(d => d.positiveCount),
           label: {
             show: true,
             position: 'right',
             formatter: (params: any) => {
-              const total = props.data[params.dataIndex].positiveCount +
-                    props.data[params.dataIndex].neutralCount +
-                    props.data[params.dataIndex].negativeCount;
+              const total = sortedData.value[params.dataIndex].positiveCount +
+                    sortedData.value[params.dataIndex].neutralCount +
+                    sortedData.value[params.dataIndex].negativeCount;
               return total.toString()
             },
           fontSize: 14,

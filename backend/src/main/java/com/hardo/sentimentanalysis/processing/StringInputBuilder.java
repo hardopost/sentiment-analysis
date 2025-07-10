@@ -8,8 +8,9 @@ import com.hardo.sentimentanalysis.domain.Statement;
 
 public class StringInputBuilder {
 
-    public static String buildStringInputForStatementEmbedding(Statement statement) {
+    public static String buildStringInputForStatementEmbedding(Statement statement, Report report) {
         return String.format("""
+            Market: %s
             Company: %s
             Period: %s
             Type: %s
@@ -19,8 +20,9 @@ public class StringInputBuilder {
             Content: %s
             Capitalization: %s
             """,
-                statement.getCompanyName(),
-                statement.getPeriod(),
+                report.getMarket(),
+                report.getCompanyName(),
+                report.getPeriod(),
                 statement.getType(),
                 statement.getSector(),
                 statement.getCategory(),
@@ -33,19 +35,21 @@ public class StringInputBuilder {
     public static String buildStringInputForReportEmbedding(Report report, CompanySummaryDTO summary) {
 
         return String.format("""
+        Market: %s
         Company: %s
         Period: %s
         Capitalization: %s
-        Report Type: %s
+        Sector: %s
         Summary: %s
         Tone: %s
         Positive Drivers: %s
         Negative Drivers: %s
         """,
+                report.getMarket(),
                 report.getCompanyName(),
                 report.getPeriod(),
                 report.getCapitalization(),
-                summary.reportType(),
+                report.getSector(),
                 summary.summary(),
                 summary.tone(),
                 String.join(", ", summary.positiveDrivers()),
@@ -70,13 +74,13 @@ public class StringInputBuilder {
         Sector: %s
         Summary: %s
         Sentiment Justification: %s
-        Tone: %s
+        Sentiment: %s
         
         """,
                 sector.getSectorName(),
                 sector.getSummary(),
                 sector.getSentimentJustification(),
-                sector.getTone()
+                sector.getSentiment()
         );
     }
 

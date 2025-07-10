@@ -8,5 +8,6 @@ public record StatementValidationDTO(
         boolean isCategoryValid,
         boolean isSentimentValid,
         boolean isSectorValid,
+        String esg,
         String comment
 ) {}

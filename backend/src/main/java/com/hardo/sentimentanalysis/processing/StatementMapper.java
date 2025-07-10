@@ -10,13 +10,14 @@ public class StatementMapper {
     public static Statement fromReportAndStatementDTO(StatementDTO dto, Report report) {
         return new Statement(
                 UUID.randomUUID(),
+                report.getMarket(),
                 dto.type(),
-                dto.companyName(),
-                dto.sector(),
+                report.getCompanyName(),
+                report.getSector(),
                 dto.category(),
                 dto.content(),
                 dto.sentiment().toLowerCase(),
-                dto.period(),
+                report.getPeriod(),
                 report.getCapitalization(),
                 report.getId()
         );

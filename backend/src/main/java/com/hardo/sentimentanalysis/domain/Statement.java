@@ -16,6 +16,9 @@ public class Statement {
     private UUID id;
 
     @Column(nullable = false)
+    private String market; // "Stockholm", "Baltic"
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Type type;  // 'company' or 'sector'
 

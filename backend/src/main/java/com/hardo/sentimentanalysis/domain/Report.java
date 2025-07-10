@@ -86,4 +86,22 @@ public class Report {
 
     @Column(name = "ranking_total_tokens")
     private Integer rankingTotalTokens;
+
+    @Column(name = "report_title_full")
+    private String reportTitleFull; // Full title of the report, e.g. "Annual Report 2024 - Company Name"
+
+    @Column(name = "report_fiscal_year")
+    private String reportFiscalYear; // Fiscal year of the report, e.g. "2024" or "2023/2024"
+
+    @Column(name = "market")
+    private String market; // Market where the company is listed, e.g. "Stockholm" or "Baltic"
+
+    @Column(name = "validation_prompt_tokens")
+    private Integer validationPromptTokens;
+
+    @Column(name = "validation_completion_tokens")
+    private Integer validationCompletionTokens;
+
+    @Column(name = "validation_total_tokens")
+    private Integer validationTotalTokens;
 }

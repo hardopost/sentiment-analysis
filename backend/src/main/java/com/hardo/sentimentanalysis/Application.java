@@ -1,9 +1,6 @@
 package com.hardo.sentimentanalysis;
 
-import com.hardo.sentimentanalysis.processing.CompanyRankingService;
-import com.hardo.sentimentanalysis.processing.SectorRankingService;
-import com.hardo.sentimentanalysis.processing.SectorSummaryService;
-import com.hardo.sentimentanalysis.processing.StatementValidationService;
+import com.hardo.sentimentanalysis.processing.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -99,7 +96,7 @@ public class Application {
 	/*@Bean
 	CommandLineRunner runSectorSummaryService(SectorSummaryService service) {
 		return args -> {
-			service.generateSectorSummary("2024");
+			service.generateSectorSummary("2024", "baltic");
 		};
 	}*/
 
@@ -107,7 +104,7 @@ public class Application {
 	/*@Bean
 	CommandLineRunner runSectorRankingService(SectorRankingService service) {
 		return args -> {
-			service.rankSectors("2024");
+			service.rankSectors("2024", "baltic"); //change to "stockholm" if needed then change amount of sectors from 7 to 11 in the sector-ranking-prompt also
 		};
 	}*/
 
@@ -115,7 +112,7 @@ public class Application {
 	/*@Bean
 	CommandLineRunner runCompanyRankingService(CompanyRankingService service) {
 		return args -> {
-			service.rankCompaniesInSectors("2024");
+			service.rankCompaniesInSectors("2024", "baltic");
 		};
 	}*/
 

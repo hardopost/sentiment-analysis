@@ -1,21 +1,33 @@
 <template>
-  <div class="max-w-screen-xl mx-auto px-4 py-6">
+  <div class="max-w-screen-2xl mx-auto px-4 py-6">
     <h1 class="text-2xl font-bold mb-6 text-center">Aggregated Overview</h1>
 
     <div v-if="loading">Loading data...</div>
     <div v-else-if="error">Error loading data: {{ error }}</div>
 
-    <div v-else-if="sentiments" class="space-y-10 flex flex-col items-center">
-      <!-- Company Sentiment -->
-      <div class="w-full max-w-[850px] border border-gray-100 rounded-xl shadow-md p-4">
-        <h2 class="text-xl font-semibold mb-2 text-center">Company Statements Count</h2>
-        <CompanyCategoryChart :data="sentiments.companies" />
+    <div v-else-if="sentiments" class="space-y-10">
+      <!-- Company Charts Row -->
+      <div class="flex flex-col lg:flex-row gap-6 justify-center">
+        <div class="flex-1 border border-gray-200 rounded-xl shadow p-4">
+          <h2 class="text-center font-semibold mb-2">Companies - Stockholm</h2>
+          <CompanyCategoryChart :data="sentiments.companies.stockholm" />
+        </div>
+        <div class="flex-1 border border-gray-200 rounded-xl shadow p-4">
+          <h2 class="text-center font-semibold mb-2">Companies - Baltic</h2>
+          <CompanyCategoryChart :data="sentiments.companies.baltic" />
+        </div>
       </div>
 
-      <!-- Sector Sentiment -->
-      <div class="w-full max-w-[850px] border border-gray-100 rounded-xl shadow-md p-4">
-        <h2 class="text-xl font-semibold mb-2 text-center">Sector Statements Count</h2>
-        <SectorCategoryChart :data="sentiments.sectors" />
+      <!-- Sector Charts Row -->
+      <div class="flex flex-col lg:flex-row gap-6 justify-center">
+        <div class="flex-1 border border-gray-200 rounded-xl shadow p-4">
+          <h2 class="text-center font-semibold mb-2">Sectors - Stockholm</h2>
+          <SectorCategoryChart :data="sentiments.sectors.stockholm" />
+        </div>
+        <div class="flex-1 border border-gray-200 rounded-xl shadow p-4">
+          <h2 class="text-center font-semibold mb-2">Sectors - Baltic</h2>
+          <SectorCategoryChart :data="sentiments.sectors.baltic" />
+        </div>
       </div>
     </div>
   </div>
@@ -35,9 +47,11 @@
     negativeCount: number;
   }
 
+type MarketKey = 'stockholm' | 'baltic';
+
 interface SentimentSummary {
-  companies: SentimentData[];
-  sectors: SentimentData[];
+  companies: Record<MarketKey, SentimentData[]>;
+  sectors: Record<MarketKey, SentimentData[]>;
 }
   
   // Reactive variables 

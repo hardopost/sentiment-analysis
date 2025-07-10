@@ -7,6 +7,7 @@ import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.ChatOptions;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
@@ -25,13 +26,13 @@ public class SectorSummaryService {
     private Resource reportSummaryPrompt;
 
 
-    public SectorSummaryService(SectorRepository sectorRepository, StatementRepository statementRepository, ChatClient.Builder builder) {
+    public SectorSummaryService(SectorRepository sectorRepository, StatementRepository statementRepository, @Qualifier("geminiChatClient") ChatClient chatClient) {
         this.sectorRepository = sectorRepository;
         this.statementRepository = statementRepository;
-        this.chatClient = builder.defaultOptions(ChatOptions.builder().temperature(0.0d).build()).build();
+        this.chatClient = chatClient;
     }
 
-    public void generateSectorSummary(String period) {
+    public void generateSectorSummary(String period, String market) {
 
         List<String> sectors = List.of(
                 "Technology", "Telecommunications", "Health Care", "Financials", "Real Estate",
@@ -42,10 +43,10 @@ public class SectorSummaryService {
         for (String sector : sectors) {
 
             logger.info("Processing sector: {}", sector);
-            List<Statement> statements = statementRepository.findByTypeAndSectorOrderByCategory(Statement.Type.sector, sector, period); // Fetch statements for the sector
+            List<Statement> statements = statementRepository.findByTypeAndSectorOrderByCategory(Statement.Type.sector, sector, period, market); // Fetch statements for the sector and market
             if (statements.isEmpty()) {
                 logger.info("No statements found from database for the {} sector.", sector);
-                return;
+                continue; // Skip to the next sector if no statements are found
             }
             else {
                 logger.info("Found {} statements for the {} sector: ", statements.size(), sector);
@@ -77,21 +78,22 @@ public class SectorSummaryService {
                     sector,
                     llmResult.output().summary(),
                     llmResult.output().sentimentJustification(),
-                    llmResult.output().tone(),
+                    llmResult.output().sentiment(),
                     period,
                     llmResult.promptTokens(),
                     llmResult.completionTokens(),
                     llmResult.totalTokens(),
                     null,
                     null,
-                    null);
+                    null,
+                    market);
 
             System.out.println("Prompt Tokens: " + llmResult.promptTokens());
             System.out.println("Completion Tokens: " + llmResult.completionTokens());
             System.out.println("Total Tokens: " + llmResult.totalTokens());
             System.out.println("-----------------------------------------------------------------------------------------------------------");
-            System.out.println("Tone: " + llmResult.output().tone());
             System.out.println("Summary: " + llmResult.output().summary());
+            System.out.println("Sentiment: " + llmResult.output().sentiment());
             System.out.println("Justification: " + llmResult.output().sentimentJustification());
 
             // Save the sector summary to the database

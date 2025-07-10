@@ -12,7 +12,7 @@ import java.util.List;
 public class SectorSummariesDTO {
     String sector; // "Technology"
     String summary;
-    String tone;
+    String sentiment;
     String toneRationale;
     Integer ranking;
     String rankingRationale;
