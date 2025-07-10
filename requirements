@@ -1,0 +1,22 @@
+R1. The system must automatically retrieve annual reports and extract text content to prepare inputs for LLM processing.
+R2. The system must extract all relevant forward-looking statements from the annual report text using a large language model (LLM).
+R3. Each extracted statement must be classified as either company-level or sector-level.
+R4. The system must assign each statement a thematic category based on predefined labels.
+These labels include separate sets of categories for company-level and sector-level statements. The classification process applies these categories automatically, and the results will be examined further in Chapter 5.
+R5. The system must label the sentiment of each statement as positive, neutral, or negative.
+R6. The system must store each extracted forward-looking statement in the database, including metadata such as the company name, reporting period, type (company or sector), assigned sector (from a predefined list of 11), and a reference to the report from which the statement was extracted.
+R7. The system must generate embedding vectors for each extracted statement, including key metadata (company name, report period, type, sector, report ID), to support similarity-based search and retrieval-augmented generation (RAG).
+R8. The system must store metadata about each processed report in the database, including the company name, download link, report type, and processing status.
+R9. The system must log token usage information for each processed report, including input tokens, output tokens, and total token count, in order to support cost estimation and efficiency analysis.
+R10. The system must generate and store a textual summary of each company’s outlook in the database. In addition to structured storage, each summary must also be embedded into vector format for use in semantic search and chatbot interaction.
+R11. The system must generate sector-level outlook summaries by aggregating sector-type statements across multiple reports. Each summary must include associated ranking information (e.g., sentiment ranking or position within the sector list) and be stored in the database.
+R12. The system must generate company and sector sentiment rankings based on extracted data and summaries.
+R13. The system must support user interaction through a chatbot that answers natural language queries based on stored structured and vectorized data.
+Non-Functional Requirements
+R14. The system should respond within a reasonable time when processing user queries.
+R15. The system should maintain usability and clarity in its interface, with compatibility for screen resolutions starting from 1378 × 768.
+R16. The system should store data in both structured and vector formats to support similarity-based search and RAG.
+R17. The system should be designed with cost-efficiency in mind, particularly in terms of LLM usage and token consumption.
+R18. The system should rely solely on prompt-based interaction with the language model, allowing prompt instructions or classification schemes to be updated without requiring fine-tuning or retraining.
+R19. The system should provide an intuitive and responsive user interface that supports interactive exploration of sentiment data without obstructing key visualizations.
+R20. The chatbot interface should be globally accessible across all views and implemented in a way that allows users to interact with sentiment data without disrupting the surrounding content.
