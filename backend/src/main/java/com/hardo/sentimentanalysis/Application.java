@@ -116,4 +116,11 @@ public class Application {
 		};
 	}*/
 
+	/*@Bean
+	CommandLineRunner runTempEmbeddingProcessing(TempEmbeddingProcessing processing) {
+		return args -> {
+			processing.processStatements();
+		};
+	}*/
+
 }

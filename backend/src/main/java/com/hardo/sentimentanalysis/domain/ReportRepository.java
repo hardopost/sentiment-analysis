@@ -72,5 +72,4 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
 
 
-
 }

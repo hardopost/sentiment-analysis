@@ -145,7 +145,7 @@ public class StatementProcessingService {
         logger.info("Created {} embeddings from statements.", embeddingResponse.getResults().size());
         logger.info("Embedding metadata: {}", embeddingResponse.getMetadata());*/
 
-        // Split into batches of 250, because embedding model has a limit of instances
+        // Split into batches of 250, because Gemini embedding model had a limit of instances, but OpenAI has larger limit, the code is not refactored
         List<List<String>> batches = Lists.partition(enrichedStatements, 200);
 
         List<Embedding> allEmbeddings = new ArrayList<>();
